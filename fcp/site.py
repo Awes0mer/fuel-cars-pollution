@@ -699,7 +699,8 @@ PRIVACY = (
     '<li><b>The calculator stays in your browser.</b> The sliders and buttons run locally; nothing you choose is sent anywhere.</li>'
     '<li><b>Hosting.</b> The files are served by Netlify. Like any web host, Netlify may record technical request data such as IP address, browser type and '
     'time of request in its server logs, under <a href="https://www.netlify.com/privacy/">Netlify\'s privacy policy</a>. This project does not receive or use those logs.</li>'
-    '<li><b>While the site is private,</b> Netlify\'s own sign-in page controls access for the project team. That page is Netlify\'s, under its policy.</li>'
+    '<li><b>Unpublished previews</b> of new versions are limited to the project team by Netlify\'s own sign-in page, which is Netlify\'s, under its policy. '
+    'The published site needs no sign-in.</li>'
     '<li><b>Data on the site.</b> Only public statistics from government and open-data publishers. No personal or business data.</li>'
     '<li><b>Questions.</b> Open an issue on the <a href="%s">project repository</a> once it is public.</li></ul>'
 ) % REPO_URL
