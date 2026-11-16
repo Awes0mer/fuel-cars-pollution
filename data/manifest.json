@@ -1,0 +1,104 @@
+{
+ "files": [
+  {
+   "id": "eia_mer_t0901",
+   "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.01",
+   "path": "data/raw/eia_mer_t0901/T09.01.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:42+00:00",
+   "http_status": 200,
+   "content_type": "text/csv; charset=utf-8",
+   "bytes": 424864,
+   "sha256": "a88f975d78decb2658c3d4b4c92444dc85571a626d449281095bbcc11b22730f"
+  },
+  {
+   "id": "eia_mer_t0904",
+   "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.04",
+   "path": "data/raw/eia_mer_t0904/T09.04.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:44+00:00",
+   "http_status": 200,
+   "content_type": "text/csv; charset=utf-8",
+   "bytes": 741240,
+   "sha256": "55746937a68c817ef079f51e329b28d3fd0acacc075f5a9fff7f7875f3029fc3"
+  },
+  {
+   "id": "eia_mer_t0307c",
+   "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T03.07C",
+   "path": "data/raw/eia_mer_t0307c/T03.07C.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:46+00:00",
+   "http_status": 200,
+   "content_type": "text/csv; charset=utf-8",
+   "bytes": 1093613,
+   "sha256": "914063d164e451b18a0da3d6757d02a4e337365309261d9fbfa166cecf4aff6e"
+  },
+  {
+   "id": "eia_mer_t1105",
+   "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T11.05",
+   "path": "data/raw/eia_mer_t1105/T11.05.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:47+00:00",
+   "http_status": 200,
+   "content_type": "text/csv; charset=utf-8",
+   "bytes": 1077312,
+   "sha256": "a57743df8c46ad3d68ea16f8299e41ddfd5453e2526143fe3f0233d57ab13708"
+  },
+  {
+   "id": "eia_brent_annual",
+   "url": "https://www.eia.gov/dnav/pet/hist_xls/RBRTEa.xls",
+   "path": "data/raw/eia_brent_annual/RBRTEa.xls",
+   "retrieved_at_utc": "2026-11-16T05:54:47+00:00",
+   "http_status": 200,
+   "content_type": "application/vnd.ms-excel",
+   "bytes": 35328,
+   "sha256": "7e68f38d171232ce40d532901a817248aecf3d460cc5e00049b8a1f3a095b9fc"
+  },
+  {
+   "id": "fhwa_vm203",
+   "url": "https://www.fhwa.dot.gov/policyinformation/statistics/2024/xls/vm203.xlsx",
+   "path": "data/raw/fhwa_vm203/vm203.xlsx",
+   "retrieved_at_utc": "2026-11-16T05:54:48+00:00",
+   "http_status": 200,
+   "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "bytes": 968803,
+   "sha256": "48210b5584850b575bf23d4f2078863fe3e3b71112150abeb10bc3caa1fd256b"
+  },
+  {
+   "id": "fhwa_vm1_2000_2024",
+   "url": "https://data.transportation.gov/api/v3/views/9ey8-2qc4/export.csv?accessType=DOWNLOAD",
+   "path": "data/raw/fhwa_vm1_2000_2024/vm1_2000_2024.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:49+00:00",
+   "http_status": 200,
+   "content_type": "text/csv; charset=utf-8",
+   "bytes": 335578,
+   "sha256": "aa70a960532c53f7172fefa9a15de00bf4ff054371e3e5948e8a2a328a650d5d"
+  },
+  {
+   "id": "worldbank_pop",
+   "url": "https://api.worldbank.org/v2/country/WLD;USA/indicator/SP.POP.TOTL?format=json&per_page=500",
+   "path": "data/raw/worldbank_pop/sp_pop_totl.json",
+   "retrieved_at_utc": "2026-11-16T05:54:49+00:00",
+   "http_status": 200,
+   "content_type": "application/json;charset=utf-8",
+   "bytes": 26427,
+   "sha256": "b027070945eb054988a5c11d211f96999c9d4a4866dde5d4a6202701229a403e"
+  },
+  {
+   "id": "ember_ev_monthly",
+   "url": "https://files.ember-energy.org/public-downloads/transport/outputs/monthly_ev_sales.csv",
+   "path": "data/raw/ember_ev_monthly/monthly_ev_sales.csv",
+   "retrieved_at_utc": "2026-11-16T05:54:52+00:00",
+   "http_status": 200,
+   "content_type": "text/csv;charset=utf-8",
+   "bytes": 7695642,
+   "sha256": "76e241d07d2086477ef0279d4ce20cd6a02c7869b5152ecc016bf132d2734fb2"
+  },
+  {
+   "id": "epa_trends_tier1",
+   "url": "https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx",
+   "path": "data/raw/epa_trends_tier1/national_tier1_caps.xlsx",
+   "retrieved_at_utc": "2026-11-16T05:54:53+00:00",
+   "http_status": 200,
+   "content_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "bytes": 148762,
+   "sha256": "c8087d34625941649550dfe70a8167c0eb802da7bfcd980ccd7426c0980f8113"
+  }
+ ]
+}
