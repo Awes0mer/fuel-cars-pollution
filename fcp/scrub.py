@@ -49,6 +49,22 @@ _TOKEN = re.compile(
 _ATTR = re.compile(rb"([^\s=/>]+)\s*=\s*(?:\"([^\"]*)\"|'([^']*)')")
 
 
+_REF = re.compile(r"&(#x[0-9A-Fa-f]+|#[0-9]+|amp|lt|gt|quot|apos);")
+_NAMED = {"amp": "&", "lt": "<", "gt": ">", "quot": '"', "apos": "'"}
+
+
+def _xml_unescape(text):
+    """Decode XML character and predefined entity references, as an XML parser does."""
+    def ref(m):
+        r = m.group(1)
+        if r.startswith("#x"):
+            return chr(int(r[2:], 16))
+        if r.startswith("#"):
+            return chr(int(r[1:]))
+        return _NAMED[r]
+    return _REF.sub(ref, text)
+
+
 def _author_content_spans(core_xml):
     """Byte spans of the content of real author elements, resolved by namespace URI."""
     spans = []
@@ -69,7 +85,7 @@ def _author_content_spans(core_xml):
             continue
         scope = dict(nsmap)
         for name, v1, v2 in _ATTR.findall(attrs):
-            value = (v1 or v2 or b"").decode("utf-8", "replace")
+            value = _xml_unescape((v1 or v2 or b"").decode("utf-8", "replace"))
             if name == b"xmlns":
                 scope[""] = value
             elif name.startswith(b"xmlns:"):

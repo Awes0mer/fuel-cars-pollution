@@ -37,7 +37,7 @@ def edition(source_id):
     if source_id.startswith("eia_mer_"):
         # The landing page states the release current when it was read. A table belongs to that
         # release only if the page was read after the table was downloaded AND the release it
-        # names came out before the download: no newer release can sit between the two reads.
+        # names came out on an earlier day than the download: no newer release can sit between the two reads.
         # Otherwise the association is unknown and no date is given.
         with open(_raw("eia_mer_index", "index.html"), encoding="utf-8", errors="replace") as f:
             m = re.search(r'Release Date:</span>\s*<span class="date">\s*([^<]+?)\s*</span>', f.read())
@@ -48,7 +48,7 @@ def edition(source_id):
         except ValueError:
             return None
         t_table, t_index = _retrieved(source_id), _retrieved("eia_mer_index")
-        if t_table and t_index and t_table <= t_index and released <= t_table.date():
+        if t_table and t_index and t_table <= t_index and released < t_table.date():  # a same-day release could be newer than the table
             return "release of %s" % m.group(1)
         return None
     if source_id == "eia_brent_annual":

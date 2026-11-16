@@ -186,3 +186,26 @@ def test_mer_edition_only_when_release_page_proves_the_association(monkeypatch):
     assert cite.edition("eia_mer_t0901") is not None  # page read after the table: proven
     times["eia_mer_t0901"] = dt.datetime(2026, 11, 16, 9, 0, tzinfo=dt.timezone.utc)
     assert cite.edition("eia_mer_t0901") is None  # table read after the page: a release could sit between
+
+
+def test_scrubber_decodes_character_references_in_namespace_declarations():
+    from fcp.scrub import author_values, clear_authors
+
+    xml = (b'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties">'
+           b'<dc:creator xmlns:dc="http://purl.org/dc/elements/1.&#49;/">Alice</dc:creator></cp:coreProperties>')
+    assert author_values(xml) == ["Alice"]
+    out = clear_authors(xml)
+    assert author_values(out) == [] and b"Alice" not in out
+
+
+def test_mer_edition_withheld_for_same_day_release(monkeypatch):
+    import datetime as dt
+
+    from fcp import cite
+
+    real = cite.dt.datetime.strptime
+    monkeypatch.setattr(cite, "_retrieved", lambda sid: {
+        "eia_mer_t0901": dt.datetime(2026, 10, 29, 8, 0, tzinfo=dt.timezone.utc),
+        "eia_mer_index": dt.datetime(2026, 10, 29, 20, 0, tzinfo=dt.timezone.utc)}.get(sid))
+    assert real("October 29, 2026", "%B %d, %Y").date() == dt.date(2026, 10, 29)
+    assert cite.edition("eia_mer_t0901") is None  # released the same day: the table may predate it
