@@ -107,6 +107,7 @@ footer{margin-top:56px;background:var(--concrete);border-top:6px solid var(--lan
 footer .in{padding-top:18px;padding-bottom:28px;font-size:.86rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
 .prose{max-width:72ch}
+main > h1:first-child{margin-top:1.8rem}
 @media (max-width:820px){
 .hero{grid-template-columns:1fr;gap:26px;padding-top:28px}
 header.site{position:static}
