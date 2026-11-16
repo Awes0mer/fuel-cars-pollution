@@ -215,3 +215,13 @@ def test_mer_edition_withheld_for_same_day_release(tmp_path, monkeypatch):
     cite = _mer_fixture(tmp_path, monkeypatch, "October 29, 2026",
                         dt.datetime(2026, 10, 29, 8, 0, tzinfo=utc), dt.datetime(2026, 10, 29, 20, 0, tzinfo=utc))
     assert cite.edition("eia_mer_t0901") is None  # released the same day: the table may predate it
+
+
+def test_mer_edition_withheld_across_utc_midnight(tmp_path, monkeypatch):
+    import datetime as dt
+
+    utc = dt.timezone.utc
+    # 00:30 UTC on October 30 is still October 29 in U.S. Eastern time, the release's own day.
+    cite = _mer_fixture(tmp_path, monkeypatch, "October 29, 2026",
+                        dt.datetime(2026, 10, 30, 0, 30, tzinfo=utc), dt.datetime(2026, 10, 30, 1, 0, tzinfo=utc))
+    assert cite.edition("eia_mer_t0901") is None

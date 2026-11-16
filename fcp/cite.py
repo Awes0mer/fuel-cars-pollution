@@ -48,7 +48,10 @@ def edition(source_id):
         except ValueError:
             return None
         t_table, t_index = _retrieved(source_id), _retrieved("eia_mer_index")
-        if t_table and t_index and t_table <= t_index and released < t_table.date():  # a same-day release could be newer than the table
+        # EIA dates releases in U.S. Eastern time with no hour given. Take the table's download
+        # date at UTC-5 (EST): that is never later than its true Eastern date, so a release dated
+        # the same Eastern day as the download can never be credited to the table.
+        if t_table and t_index and t_table <= t_index and released < (t_table - dt.timedelta(hours=5)).date():
             return "release of %s" % m.group(1)
         return None
     if source_id == "eia_brent_annual":
