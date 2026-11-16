@@ -40,14 +40,17 @@ def author_values(core_xml):
     return [el.text.strip() for el in _author_elements(ET.fromstring(core_xml)) if el.text and el.text.strip()]
 
 
+AUTHOR_ELEMENT = re.compile(
+    rb"(<((?:[A-Za-z_][\w.-]*:)?(?:creator|lastModifiedBy))\b[^>]*?(?<!/)>)(.*?)(</\2\s*>)", re.S)
+
+
 def clear_authors(core_xml):
-    """Empty every author field; the rest of the XML text is left byte-for-byte as it was."""
-    out = core_xml
-    for value in set(author_values(core_xml)):
-        enc = value.encode("utf-8")
-        esc = enc.replace(b"&", b"&amp;").replace(b"<", b"&lt;").replace(b">", b"&gt;")
-        out = re.sub(rb"(>\s*)" + re.escape(esc) + rb"(\s*</)", rb"\1\2", out)
-    assert not author_values(out), "author field left after scrubbing"
+    """Empty every author element's content (whatever its spelling or character
+    references); the rest of the XML text is left byte-for-byte as it was. The
+    namespace-aware check below confirms nothing was missed."""
+    out = AUTHOR_ELEMENT.sub(rb"\1\4", core_xml)
+    if author_values(out):
+        raise ValueError("author field left after scrubbing")
     return out
 
 
@@ -74,6 +77,18 @@ def has_author_names(data):
     if SCRUBBED_PART not in z.namelist():
         return False
     return bool(author_values(z.read(SCRUBBED_PART)))
+
+
+def scrub_download(data, filename, entry):
+    """Bytes to store for a fresh download; records the scrub in the manifest entry."""
+    if not filename.endswith(".xlsx") or not has_author_names(data):
+        return data
+    new, crcs = scrub_bytes(data)
+    entry["sha256_as_downloaded"] = hashlib.sha256(data).hexdigest()
+    entry["bytes_as_downloaded"] = len(data)
+    entry["scrubbed"] = "Author names removed from %s (dc:creator, cp:lastModifiedBy); all other parts unchanged." % SCRUBBED_PART
+    entry["parts_crc32_as_downloaded"] = crcs
+    return new
 
 
 def scrub_entry(entry):

@@ -20,11 +20,14 @@ if [ -n "$(ls -A "$RUN_DIR/store")" ]; then echo "store not empty" >&2; exit 1; 
 
 TOKEN="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
 mkdir -p "$(dirname "$TOKEN_OUT")"
-# create both token files private (0600) before any secret is written
-( umask 077; : > "$RUN_DIR/auth-token"; : > "$TOKEN_OUT" )
-chmod 600 "$RUN_DIR/auth-token" "$TOKEN_OUT"
-printf '%s\n' "$TOKEN" > "$RUN_DIR/auth-token"
-printf '%s\n' "$TOKEN" > "$TOKEN_OUT"
+# write each token to a NEW private file, then rename it into place: a reader
+# holding an older copy of the file open never sees the new token
+for dest in "$RUN_DIR/auth-token" "$TOKEN_OUT"; do
+  tmp="$(umask 077; mktemp "$(dirname "$dest")/.token.XXXXXX")"
+  printf '%s\n' "$TOKEN" > "$tmp"
+  chmod 600 "$tmp"
+  mv -f "$tmp" "$dest"
+done
 
 export CLOUD_PROVIDER=local
 export LOCAL_PATH="$RUN_DIR/store"

@@ -37,18 +37,24 @@ def fetch_one(src):
         status = resp.status
         ctype = resp.headers.get("Content-Type", "")
     retrieved = dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat()
-    with open(path, "wb") as f:
-        f.write(body)
-    return {
+    entry = {
         "id": src["id"],
         "url": src["url"],
         "path": "data/raw/%s/%s" % (src["id"], src["filename"]),
         "retrieved_at_utc": retrieved,
         "http_status": status,
         "content_type": ctype,
-        "bytes": len(body),
-        "sha256": sha256_file(path),
     }
+    from fcp.scrub import scrub_download  # no personal names in stored files
+
+    stored = scrub_download(body, src["filename"], entry)  # raises before anything is written
+    tmp = path + ".part"
+    with open(tmp, "wb") as f:
+        f.write(stored)
+    os.replace(tmp, path)  # the old file and manifest entry stay until this succeeds
+    entry["bytes"] = len(stored)
+    entry["sha256"] = sha256_file(path)
+    return entry
 
 
 def load_manifest():
@@ -70,9 +76,6 @@ def main():
             continue
         try:
             entry = fetch_one(src)
-            from fcp.scrub import scrub_entry  # no personal names in stored files
-
-            scrub_entry(entry)
             by[src["id"]] = entry
             print("ok   %-22s %9d bytes  %s" % (src["id"], entry["bytes"], entry["sha256"][:12]))
         except Exception as e:  # report, keep going, and fail the run at the end

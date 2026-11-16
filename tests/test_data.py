@@ -106,3 +106,40 @@ def test_office_files_carry_no_personal_names_and_data_parts_are_unchanged():
                 if info.filename != "docProps/core.xml":
                     assert info.CRC == m["parts_crc32_as_downloaded"][info.filename], (sid, info.filename)
             assert set(z.namelist()) == set(m["parts_crc32_as_downloaded"]), sid
+
+
+def test_scrubber_handles_namespaces_attributes_and_character_references():
+    from fcp.scrub import author_values, clear_authors
+
+    xml = (b'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" '
+           b'xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">A&#108;ice &amp; Co</dc:creator>'
+           b'<cp:lastModifiedBy>Bob</cp:lastModifiedBy><dc:title>Keep me</dc:title></cp:coreProperties>')
+    assert author_values(xml) == ["Alice & Co", "Bob"]
+    out = clear_authors(xml)
+    assert author_values(out) == [] and b"Keep me" in out and b"Alice" not in out and b"A&#108;ice" not in out
+
+
+def test_fetch_scrubs_before_storing(tmp_path, monkeypatch):
+    import hashlib
+    import io
+    import pathlib
+    import zipfile
+
+    from fcp import fetch
+    from fcp.scrub import author_values
+
+    core = (b'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" '
+            b'xmlns:dc="http://purl.org/dc/elements/1.1/"><dc:creator>Some Person</dc:creator></cp:coreProperties>')
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("docProps/core.xml", core)
+        z.writestr("xl/workbook.xml", b"<workbook/>")
+    src_file = tmp_path / "in.xlsx"
+    src_file.write_bytes(buf.getvalue())
+    monkeypatch.setattr(fetch, "RAW", str(tmp_path / "raw"))
+    entry = fetch.fetch_one({"id": "t", "url": pathlib.Path(src_file).as_uri(), "filename": "t.xlsx"})
+    stored = (tmp_path / "raw" / "t" / "t.xlsx").read_bytes()
+    assert author_values(zipfile.ZipFile(io.BytesIO(stored)).read("docProps/core.xml")) == []
+    assert entry["sha256"] == hashlib.sha256(stored).hexdigest()
+    assert entry["sha256_as_downloaded"] == hashlib.sha256(buf.getvalue()).hexdigest()
+    assert not list((tmp_path / "raw" / "t").glob("*.part"))
