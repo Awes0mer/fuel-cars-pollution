@@ -11,7 +11,7 @@ Crude oil → gasoline → fuel use → U.S. transport CO2, with miles driven an
 
 ## Result first, weaknesses first
 
-**Pre-registered verdict: PASS** (all four parts; rule in [PREREGISTRATION.md](PREREGISTRATION.md), committed before any run: `c17c07b85dc4`).
+**Pre-registered verdict: PASS** (all four parts; rule in [PREREGISTRATION.md](PREREGISTRATION.md), committed before any run: `173df905460e`).
 
 Before reading that as a win:
 
