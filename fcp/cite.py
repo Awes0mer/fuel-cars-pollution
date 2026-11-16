@@ -26,22 +26,31 @@ def _raw(source_id, filename):
     return os.path.join(RAW, source_id, filename)
 
 
-def _retrieved_day(source_id):
+def _retrieved(source_id):
     with open(MANIFEST, encoding="utf-8") as f:
         m = {e["id"]: e for e in json.load(f)["files"]}
-    return m[source_id]["retrieved_at_utc"][:10] if source_id in m else None
+    return dt.datetime.fromisoformat(m[source_id]["retrieved_at_utc"]) if source_id in m else None
 
 
 def edition(source_id):
     """Release/update statement found inside the downloaded file, or None."""
     if source_id.startswith("eia_mer_"):
-        # The landing page states the current release. It only describes a table that was
-        # downloaded the same UTC day; otherwise the association is unknown and no date is given.
-        if _retrieved_day(source_id) != _retrieved_day("eia_mer_index"):
-            return None
+        # The landing page states the release current when it was read. A table belongs to that
+        # release only if the page was read after the table was downloaded AND the release it
+        # names came out before the download: no newer release can sit between the two reads.
+        # Otherwise the association is unknown and no date is given.
         with open(_raw("eia_mer_index", "index.html"), encoding="utf-8", errors="replace") as f:
             m = re.search(r'Release Date:</span>\s*<span class="date">\s*([^<]+?)\s*</span>', f.read())
-        return "release of %s" % m.group(1) if m else None
+        if not m or source_id == "eia_mer_index":
+            return "release of %s" % m.group(1) if m else None
+        try:
+            released = dt.datetime.strptime(m.group(1), "%B %d, %Y").date()
+        except ValueError:
+            return None
+        t_table, t_index = _retrieved(source_id), _retrieved("eia_mer_index")
+        if t_table and t_index and t_table <= t_index and released <= t_table.date():
+            return "release of %s" % m.group(1)
+        return None
     if source_id == "eia_brent_annual":
         import xlrd
 

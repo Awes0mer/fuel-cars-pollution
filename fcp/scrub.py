@@ -40,23 +40,58 @@ def author_values(core_xml):
     return [el.text.strip() for el in _author_elements(ET.fromstring(core_xml)) if el.text and el.text.strip()]
 
 
-AUTHOR_ELEMENT = re.compile(
-    rb"(<((?:[A-Za-z_][\w.-]*:)?(?:creator|lastModifiedBy))\b[^>]*?(?<!/)>)(.*?)(</\2\s*>)", re.S)
+# One token at a time: CDATA sections, comments and processing instructions are opaque,
+# so text inside them is never read as a tag.
+_TOKEN = re.compile(
+    rb"<!\[CDATA\[.*?\]\]>|<!--.*?-->|<\?.*?\?>|<!DOCTYPE[^>]*>"
+    rb"|<(/?)([A-Za-z_][\w.:-]*)((?:\s+[^\s=/>]+\s*=\s*(?:\"[^\"]*\"|'[^']*'))*)\s*(/?)>",
+    re.S)
+_ATTR = re.compile(rb"([^\s=/>]+)\s*=\s*(?:\"([^\"]*)\"|'([^']*)')")
+
+
+def _author_content_spans(core_xml):
+    """Byte spans of the content of real author elements, resolved by namespace URI."""
+    spans = []
+    stack = []  # (qname, nsmap)
+    nsmap = {}
+    author_open = None  # (stack depth, content start)
+    for m in _TOKEN.finditer(core_xml):
+        if m.group(2) is None:  # CDATA, comment, PI or doctype
+            continue
+        closing, qname, attrs, selfclose = m.group(1), m.group(2), m.group(3) or b"", m.group(4)
+        if closing:
+            if stack:
+                stack.pop()
+                nsmap = stack[-1][1] if stack else {}
+            if author_open and author_open[0] == len(stack):
+                spans.append((author_open[1], m.start()))
+                author_open = None
+            continue
+        scope = dict(nsmap)
+        for name, v1, v2 in _ATTR.findall(attrs):
+            value = (v1 or v2 or b"").decode("utf-8", "replace")
+            if name == b"xmlns":
+                scope[""] = value
+            elif name.startswith(b"xmlns:"):
+                scope[name[6:].decode()] = value
+        prefix, _, local = qname.decode().rpartition(":")
+        ns = scope.get(prefix, "")
+        if selfclose:
+            continue
+        if author_open is None and (ns, local) in AUTHOR_FIELDS:
+            author_open = (len(stack), m.end())
+        stack.append((qname, scope))
+        nsmap = scope
+    return spans
 
 
 def clear_authors(core_xml):
-    """Empty every author element's content (whatever its spelling or character
-    references); the rest of the XML text is left byte-for-byte as it was. The
-    namespace-aware check below confirms nothing was missed."""
-    # text that only looks like an author tag inside a CDATA section or a comment is not an element
-    protected = [m.span() for m in re.finditer(rb"<!\[CDATA\[.*?\]\]>|<!--.*?-->", core_xml, re.S)]
-
-    def empty(m):
-        if any(a <= m.start() < b for a, b in protected):
-            return m.group(0)
-        return m.group(1) + m.group(4)
-
-    out = AUTHOR_ELEMENT.sub(empty, core_xml)
+    """Empty the content of every real author element (dc:creator, cp:lastModifiedBy by
+    namespace URI); everything else, including look-alike text in CDATA or comments and
+    same-named elements in other namespaces, is left byte-for-byte as it was."""
+    out = core_xml
+    for a, b in sorted(_author_content_spans(core_xml), reverse=True):
+        out = out[:a] + out[b:]
     if author_values(out):
         raise ValueError("author field left after scrubbing")
     return out

@@ -157,3 +157,32 @@ def test_scrubber_leaves_author_like_text_in_cdata_and_comments():
     assert author_values(out) == []
     assert b"<![CDATA[<dc:creator>Template</dc:creator>]]>" in out and b"<cp:lastModifiedBy>Note</cp:lastModifiedBy>" in out
     assert b"Real Person" not in out
+
+
+def test_scrubber_namespace_and_unmatched_cdata_cases():
+    from fcp.scrub import author_values, clear_authors
+
+    head = (b'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" '
+            b'xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:x="urn:other">')
+    xml = (head + b'<x:creator>Not an author field</x:creator>'
+           b'<dc:description><![CDATA[stray <dc:creator> text]]></dc:description>'
+           b'<dc:creator>Real Person</dc:creator><cp:lastModifiedBy>Other Person</cp:lastModifiedBy></cp:coreProperties>')
+    out = clear_authors(xml)
+    assert author_values(out) == []
+    assert b"<x:creator>Not an author field</x:creator>" in out
+    assert b"<![CDATA[stray <dc:creator> text]]>" in out
+    assert b"Real Person" not in out and b"Other Person" not in out
+
+
+def test_mer_edition_only_when_release_page_proves_the_association(monkeypatch):
+    import datetime as dt
+
+    from fcp import cite
+
+    times = {}
+    monkeypatch.setattr(cite, "_retrieved", lambda sid: times.get(sid))
+    times.update(eia_mer_t0901=dt.datetime(2026, 11, 16, 5, 54, tzinfo=dt.timezone.utc),
+                 eia_mer_index=dt.datetime(2026, 11, 16, 7, 32, tzinfo=dt.timezone.utc))
+    assert cite.edition("eia_mer_t0901") is not None  # page read after the table: proven
+    times["eia_mer_t0901"] = dt.datetime(2026, 11, 16, 9, 0, tzinfo=dt.timezone.utc)
+    assert cite.edition("eia_mer_t0901") is None  # table read after the page: a release could sit between
