@@ -8,6 +8,7 @@ Usage: python -m fcp.site
 
 import json
 import os
+import shutil
 
 from fcp.charts import esc, line_chart
 from fcp.cite import citations, edition, software_citation
@@ -19,6 +20,7 @@ from fcp.stats import CORR_OUT, SUMMARY_OUT
 SITE = os.path.join(ROOT, "site")
 ROUNDTRIP = os.path.join(ROOT, "results", "hydradb_float_roundtrip.json")
 SITE_URL = "https://awes0mer.github.io/fuel-cars-pollution"
+WALKTHROUGH_MEDIA = ("walkthrough-clean-20261116.mp4", "walkthrough.vtt")  # committed in site/, linked by walkthrough.html
 FAVICON = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#0b5cad"/>'
     '<path d="M14 20h14M30 22l12 10M30 44l12-10M44 32h8" stroke="#fff" stroke-width="4" fill="none"/>'
@@ -789,6 +791,16 @@ def build():
     with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "flow.js"), encoding="utf-8") as src, \
             open(os.path.join(SITE, "flow.js"), "w", encoding="utf-8", newline="\n") as f:
         f.write(src.read())
+    # The walkthrough page links a recorded video and its captions. They are committed
+    # source files in site/, not generated, so check they exist and copy them if the
+    # site is being built into another folder.
+    media_src = os.path.join(ROOT, "site")
+    for name in WALKTHROUGH_MEDIA:
+        src = os.path.join(media_src, name)
+        if not os.path.exists(src):
+            raise FileNotFoundError("walkthrough media missing: site/%s (committed source, not generated)" % name)
+        if os.path.abspath(SITE) != os.path.abspath(media_src):
+            shutil.copyfile(src, os.path.join(SITE, name))
     print("site built:", ", ".join(sorted(pages)))
 
 

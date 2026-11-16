@@ -26,7 +26,13 @@ def test_launch_kit_matches_results():
 def test_site_matches_results(tmp_path, monkeypatch):
     monkeypatch.setattr(site, "SITE", str(tmp_path))
     site.build()
+    assert set(site.WALKTHROUGH_MEDIA) <= set(os.listdir(tmp_path))
     for name in os.listdir(tmp_path):
+        if name in site.WALKTHROUGH_MEDIA:  # binary media: copied, so bytes must match
+            fresh = (tmp_path / name).read_bytes()
+            with open(os.path.join(ROOT, "site", name), "rb") as f:
+                assert f.read() == fresh, name
+            continue
         with open(tmp_path / name, encoding="utf-8") as f:
             fresh = f.read()
         with open(os.path.join(ROOT, "site", name), encoding="utf-8") as f:
