@@ -9,10 +9,11 @@ Usage: python -m fcp.site
 import json
 import os
 
-from fcp.charts import esc, fmt, line_chart
+from fcp.charts import esc, line_chart
+from fcp.cite import citations, edition, software_citation
 from fcp.fetch import MANIFEST, ROOT
 from fcp.learn import LINKS, load_series, results_path
-from fcp.sources import NOT_COVERED, REJECTED, SOURCES
+from fcp.sources import NOT_COVERED, REJECTED, SOFTWARE, SOURCES
 from fcp.stats import CORR_OUT, SUMMARY_OUT
 
 SITE = os.path.join(ROOT, "site")
@@ -102,15 +103,12 @@ h3{font-size:1.2rem;line-height:1.25;margin:1.8rem 0 .5rem;font-weight:650}
 .bar-key{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:.85rem;color:var(--muted);margin:4px 0 0}
 .bar-key i{display:inline-block;width:26px;height:10px;border-radius:0 5px 5px 0;background:#8d989d;margin-right:6px;vertical-align:middle}
 .bar-key i.ex{background:repeating-linear-gradient(135deg,#8d989d 0 4px,#c7cfd2 4px 7px)}
-.cards2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:18px;margin:18px 0}
 .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px}
 .card h3{margin-top:.2rem}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:12px 0}
 .stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
 .stat b{display:block;font:700 1.45rem/1.15 var(--display);font-variant-numeric:tabular-nums}
 .stat span{font-size:.84rem;color:var(--muted)}
-.box{border:1px solid var(--line);border-left:5px solid var(--accent);background:#fff;padding:12px 14px;margin:14px 0;border-radius:8px}
-.box.warn{border-left-color:var(--bad)}
 .pass{color:var(--good);font-weight:700} .fail{color:var(--bad);font-weight:700}
 .tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table{border-collapse:collapse;width:100%;font-size:.92rem;margin:.4rem 0;font-variant-numeric:tabular-nums}
@@ -145,7 +143,6 @@ output{font-weight:700}
 footer{margin-top:56px;background:var(--concrete);border-top:6px solid var(--lane)}
 footer .in{padding-top:18px;padding-bottom:28px;font-size:.86rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
-.prose{max-width:72ch}
 main > h1:first-child{margin-top:1.8rem}
 @media (max-width:820px){
 .hero{grid-template-columns:1fr;gap:26px;padding-top:28px}
@@ -237,7 +234,7 @@ def page(fname, title, body, description):
         '<main id="main">%s</main>'
         '<footer><div class="in">Built for the HydraDB Hackathon (Track 1). Data: U.S. EIA, FHWA and EPA (U.S. government works), '
         'World Bank (CC BY 4.0), Ember (CC BY 4.0). Graph engine: HydraDB v0.4.0, self-hosted (Elastic License 2.0). '
-        'This page is a static snapshot of the results. <a href="sources.html">Sources &amp; licences</a> · '
+        'Independent hackathon entry; not made or endorsed by HydraDB. This page is a static snapshot of the results. <a href="sources.html">Sources &amp; licences</a> · '
         '<a href="ai.html">AI disclosure</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · '
         '<a href="%s">Code</a></div></footer></body></html>'
     ) % (esc(title), esc(description), esc(title), esc(description), SITE_URL, SITE_URL, fname, nav, body, REPO_URL)
@@ -252,14 +249,16 @@ class Ctx:
         self.corr = load_json(CORR_OUT)
         self.summ = load_json(SUMMARY_OUT)
         self.rt = load_json(ROUNDTRIP) if os.path.exists(ROUNDTRIP) else None
+        self.editions = {}
 
     def source_line(self, source_ids):
         bits = []
         for sid in source_ids:
             s, m = self.src[sid], self.manifest[sid]
-            bits.append('%s — %s (%s); retrieved %s UTC; SHA-256 <code>%s…</code>; <a href="%s">file</a>' % (
-                esc(s["publisher"]), esc(s["title"]), esc(s["licence"]), esc(m["retrieved_at_utc"].replace("T", " ").replace("+00:00", "")),
-                esc(m["sha256"][:16]), esc(s["url"])))
+            ed = self.editions.setdefault(sid, edition(sid))
+            bits.append('%s — %s%s (%s); retrieved %s UTC; SHA-256 <code>%s…</code>; <a href="%s">file</a>' % (
+                esc(s["publisher"]), esc(s["title"]), (", " + esc(ed)) if ed else "", esc(s["licence"]),
+                esc(m["retrieved_at_utc"].replace("T", " ").replace("+00:00", "")), esc(m["sha256"][:16]), esc(s["url"])))
         return "Source: " + " · ".join(bits)
 
     def line(self, sid, label=None):
@@ -421,32 +420,6 @@ def weights_table(w):
             '<th scope="col">Value</th></tr></thead><tbody>%s</tbody></table></div></details>' % rows)
 
 
-def diagram(w):
-    fw = w
-    def lbl(t, k):
-        return "%.2f" % fw[t][k]
-    return (
-        '<figure><figcaption class="ctitle">The graph and its learned link strengths after the last refit</figcaption>'
-        '<svg class="diagram chart" viewBox="0 0 720 250" role="img" aria-labelledby="dg-t dg-d"><title id="dg-t">Graph of learned links</title>'
-        '<desc id="dg-d">Crude oil price change feeds gasoline price change (weight %s). Gasoline price (weight %s), vehicle-miles (weight %s) and EV share (weight %s) feed motor gasoline use. Motor gasoline use feeds transport CO2 (weight %s).</desc>'
-        '<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#4b5560"/></marker></defs>'
-        '<g font-size="13" fill="#16191d">'
-        '<rect x="10" y="20" width="120" height="40" rx="6" fill="#eef4fb" stroke="#0b5cad"/><text x="70" y="45" text-anchor="middle">Crude oil</text>'
-        '<rect x="200" y="20" width="120" height="40" rx="6" fill="#eef4fb" stroke="#0b5cad"/><text x="260" y="45" text-anchor="middle">Gasoline</text>'
-        '<rect x="200" y="105" width="120" height="40" rx="6" fill="#eef4fb" stroke="#0b5cad"/><text x="260" y="130" text-anchor="middle">Miles driven</text>'
-        '<rect x="200" y="190" width="120" height="40" rx="6" fill="#eef4fb" stroke="#0b5cad"/><text x="260" y="215" text-anchor="middle">EV share</text>'
-        '<rect x="420" y="105" width="130" height="40" rx="6" fill="#fff6e8" stroke="#b34d00"/><text x="485" y="130" text-anchor="middle">Fuel use</text>'
-        '<rect x="600" y="105" width="110" height="40" rx="6" fill="#fdecee" stroke="#a40e26"/><text x="655" y="130" text-anchor="middle">CO2</text>'
-        '</g><g stroke="#4b5560" stroke-width="2" fill="none" marker-end="url(#ar)">'
-        '<path d="M130,40H198"/><path d="M320,45L418,115"/><path d="M320,125H418"/><path d="M320,205L418,138"/><path d="M550,125H598"/></g>'
-        '<g font-size="12" fill="#0b5cad" font-weight="700"><text x="164" y="34" text-anchor="middle">%s</text><text x="372" y="72">%s</text>'
-        '<text x="369" y="119" text-anchor="middle">%s</text><text x="372" y="188">%s</text><text x="574" y="119" text-anchor="middle">%s</text></g></svg>'
-        '<p class="note">Weights are per percentage point of change (EV share: per point of share). Intercepts: gasoline %s, fuel use %s, CO2 %s.</p>'
-        '<p class="source">Source: <code>results/learning_results.json</code> → <code>final_weights</code> (learned from the files on the sources page).</p>'
-        + weights_table(fw) + '</figure>'
-    ) % (lbl("Gasoline", "Crude->Gasoline"), lbl("FuelUse", "Gasoline->FuelUse"), lbl("FuelUse", "VMT->FuelUse"), lbl("FuelUse", "EVShare->FuelUse"), lbl("CO2", "FuelUse->CO2"),
-         lbl("Gasoline", "Crude->Gasoline"), lbl("FuelUse", "Gasoline->FuelUse"), lbl("FuelUse", "VMT->FuelUse"), lbl("FuelUse", "EVShare->FuelUse"), lbl("CO2", "FuelUse->CO2"),
-         lbl("Gasoline", "bias"), lbl("FuelUse", "bias"), lbl("CO2", "bias"))
 
 
 def how_section(c):
@@ -569,25 +542,6 @@ def replay_flow(c):
          flow_stage("Learning-replay flowchart showing one year's inputs, predictions and link strengths", sub=True))
 
 
-def whatif(w):
-    data = json.dumps(w)
-    return (
-        '<h3>What the learned links imply</h3>'
-        '<p>Type a change and follow it through the stored link weights: crude → gasoline → fuel use → CO2. This is arithmetic on the final weights, '
-        '<b>not a validated scenario model</b>; only the yearly nowcast above was tested.</p>'
-        '<div class="whatif"><div><label for="wi-crude">Crude oil price change (%%)</label><input id="wi-crude" type="number" step="1" value="20"></div>'
-        '<div><label for="wi-vmt">Vehicle-miles change (%%)</label><input id="wi-vmt" type="number" step="0.5" value="1"></div>'
-        '<div><label for="wi-ev">EV share of new sales change (points)</label><input id="wi-ev" type="number" step="0.5" value="1"></div></div>'
-        '<p aria-live="polite">Gasoline: <output id="wi-gas"></output> %% · Fuel use: <output id="wi-fuel"></output> %% · Transport CO2: <output id="wi-co2"></output> %%</p>'
-        '<noscript><p class="note">The calculator needs JavaScript; the weights are in the diagram above.</p></noscript>'
-        '<script>(function(){var W=%s;function v(id){var x=parseFloat(document.getElementById(id).value);return isFinite(x)?x:0}'
-        'function f(x){return (x>=0?"+":"")+x.toFixed(2)}'
-        'function run(){var g=W.Gasoline.bias+W.Gasoline["Crude->Gasoline"]*v("wi-crude");'
-        'var u=W.FuelUse.bias+W.FuelUse["Gasoline->FuelUse"]*g+W.FuelUse["VMT->FuelUse"]*v("wi-vmt")+W.FuelUse["EVShare->FuelUse"]*v("wi-ev");'
-        'var c=W.CO2.bias+W.CO2["FuelUse->CO2"]*u;document.getElementById("wi-gas").textContent=f(g);'
-        'document.getElementById("wi-fuel").textContent=f(u);document.getElementById("wi-co2").textContent=f(c)}'
-        '["wi-crude","wi-vmt","wi-ev"].forEach(function(i){document.getElementById(i).addEventListener("input",run)});run()})();</script>'
-    ) % data
 
 
 def data_section(c):
@@ -636,44 +590,83 @@ def data_section(c):
 
 
 def sources_page(c):
-    rows = []
+    cites = {x["id"]: x for x in citations()}
+    cards = []
     for s in SOURCES:
         m = c.manifest[s["id"]]
-        rows.append('<section class="src"><h3>%s</h3><dl><dt>Publisher</dt><dd>%s</dd><dt>File URL</dt><dd><a href="%s">%s</a></dd>'
-                    '<dt>Licence</dt><dd>%s (<a href="%s">licence page</a>): <i>"%s"</i></dd><dt>Retrieved</dt><dd>%s UTC, %s bytes</dd>'
-                    '<dt>SHA-256</dt><dd><code>%s</code></dd></dl></section>' % (
-            esc(s["title"]), esc(s["publisher"]), esc(s["url"]), esc(s["url"]), esc(s["licence"]), esc(s["licence_url"]), esc(s["licence_evidence"]),
-            esc(m["retrieved_at_utc"]), "{:,}".format(m["bytes"]), esc(m["sha256"])))
+        ct = cites[s["id"]]
+        cards.append(
+            '<section class="src"><h3>%s</h3><dl>'
+            '<dt>Cite as</dt><dd>%s</dd>'
+            '<dt>Licence</dt><dd>%s (<a href="%s">licence page</a>): <i>"%s"</i></dd>'
+            '<dt>Changes made</dt><dd>%s</dd>'
+            '<dt>File</dt><dd><a href="%s">%s</a></dd>'
+            '<dt>Retrieved</dt><dd>%s UTC, %s bytes</dd>'
+            '<dt>SHA-256</dt><dd><code>%s</code></dd></dl></section>' % (
+                esc(s["title"]), esc(ct["text"]), esc(s["licence"]), esc(s["licence_url"]), esc(s["licence_evidence"]),
+                esc(ct["changes"]), esc(s["url"]), esc(s["url"]), esc(m["retrieved_at_utc"]), "{:,}".format(m["bytes"]), esc(m["sha256"])))
+    sw = "".join('<tr><td><a href="%s">%s</a></td><td>%s</td><td>%s</td></tr>' % (esc(x["url"]), esc(x["name"]), esc(x["licence"]), esc(x["role"]))
+                 for x in SOFTWARE)
     rej = "".join("<li><b>%s</b>: %s</li>" % (esc(x["name"]), esc(x["reason"])) for x in REJECTED)
-    body = ('<h1>Sources &amp; licences</h1><p>Every number on this site is read from one of these files. Each was downloaded by <code>fcp/fetch.py</code>; '
-            'the URL, retrieval time and SHA-256 are in <code>data/manifest.json</code>, and <code>tests/test_data.py</code> re-reads the raw files and checks both. '
-            'Licences were checked on the pages linked below on the retrieval date.</p>'
-            '%s'
-            '<h2>Considered and not used</h2><ul class="plain">%s</ul>'
-            '<h2>Credits and attribution</h2><ul class="plain">'
-            '<li>Electric car registrations: Ember, Monthly EV Sales Data, CC BY 4.0. Values aggregated to calendar years and shares here.</li>'
-            '<li>Population: World Bank, World Development Indicators (SP.POP.TOTL), CC BY 4.0.</li>'
-            '<li>Prices, fuel use, CO2: U.S. Energy Information Administration, Monthly Energy Review (public domain).</li>'
-            '<li>Vehicle-miles and registrations: U.S. Federal Highway Administration, Highway Statistics (U.S. government work).</li>'
-            '<li>Highway-vehicle pollutants: U.S. EPA, Air Pollutant Emissions Trends Data (non-commercial, educational use).</li>'
-            '<li>Graph engine: <a href="https://github.com/hydra-db/hydradb">HydraDB</a> v0.4.0, Elastic License 2.0, used self-hosted for this hackathon only. '
-            'It is not copied into this repository and not offered as a service; this site is a static snapshot of results computed with it.</li>'
-            '<li>Project code: see the repository licence.</li></ul>') % ("".join(rows), rej)
-    return body
+    return (
+        '<h1>Sources &amp; licences</h1>'
+        '<p class="lede">Every number on this site is read from one of the files below. <code>fcp/fetch.py</code> downloaded each one and recorded its URL, '
+        'retrieval time and SHA-256 in <code>data/manifest.json</code>; <code>tests/test_data.py</code> re-reads the raw files and checks both. '
+        'Licences were read on the linked pages on the retrieval date. Release and update dates in the citations are read from the files themselves.</p>'
+        '<h2>Data</h2>%s'
+        '<h2>Software</h2><p>Only open-source software is used. No third-party JavaScript, stylesheet, font or image is loaded by the site: the flowchart script, '
+        'favicon and share image were written for this project. Fonts are not bundled; the pages name fonts that a reader\'s device may already have.</p>'
+        '<div class="tablewrap"><table class="text"><thead><tr><th scope="col">Software</th><th scope="col">Licence</th><th scope="col">Used for</th></tr></thead>'
+        '<tbody>%s</tbody></table></div>'
+        '<p>Cite the graph engine as: %s</p>'
+        '<h2>This project</h2><ul class="plain"><li>Code: MIT License (<a href="%s/blob/main/LICENSE">LICENSE</a>).</li>'
+        '<li>Downloaded data files in <code>data/raw</code> keep their publishers\' licences listed above. Derived numbers that come from CC BY 4.0 data '
+        '(World Bank, Ember) are shared under the same attribution terms, with the changes stated above.</li></ul>'
+        '<h2>Names and trademarks</h2><ul class="plain">'
+        '<li>This is an independent entry to the HydraDB Hackathon. It is not made, sponsored or endorsed by HydraDB. The name HydraDB is used only to identify the engine and the hackathon.</li>'
+        '<li>Data publishers are named only to cite their data. Naming them does not imply that they endorse this project.</li></ul>'
+        '<h2>Considered and not used</h2><ul class="plain">%s</ul>'
+    ) % ("".join(cards), sw, esc(software_citation()), REPO_URL, rej)
 
 
-PRIVACY = ('<h1>Privacy</h1><ul class="plain"><li>This is a static site. It sets no cookies, runs no analytics, loads no third-party scripts or fonts, and has no forms or accounts.</li>'
-           '<li>The only script on the site runs the calculator in your browser; nothing you type leaves the page.</li>'
-           '<li>The company that hosts the files may keep standard server logs (such as IP address and time of request) under its own policy. This project does not receive or use them.</li>'
-           '<li>The project uses public data only. It contains no personal or business data.</li></ul>')
-TERMS = ('<h1>Terms</h1><ul class="plain"><li>This site is an educational hackathon project. It is provided as is, without warranty of any kind.</li>'
-         '<li>Nothing here is financial, investment, policy or engineering advice. The models are small and were tested on few years; see the limits on the results page.</li>'
-         '<li>Data stays under its own licence (see <a href="sources.html">Sources &amp; licences</a>). EPA material is used for non-commercial, educational purposes.</li>'
-         '<li>Correlations shown here describe co-movement. They do not establish cause.</li></ul>')
-AI = ('<h1>AI disclosure</h1><ul class="plain"><li>The code, analysis and text of this project were written with an AI coding assistant (Claude, by Anthropic), directed by the project author.</li>'
-      '<li>No AI model runs on this site or in the learning loop. The learning is plain recursive least squares; its weights are stored in HydraDB.</li>'
-      '<li>No number on this site was written by hand or by the AI: every figure is generated by code from the downloaded files and the result files in the repository.</li>'
-      '<li>The pass/fail rule was written and committed before the first run, and was not changed after the result was known.</li></ul>')
+PRIVACY = (
+    '<h1>Privacy</h1><p class="lede">Short version: this site collects nothing about you.</p><ul class="plain">'
+    '<li><b>No tracking.</b> No cookies, analytics, advertising, fingerprinting, forms or accounts. The pages load nothing from any other website; '
+    'an automated test checks this on every build.</li>'
+    '<li><b>The calculator stays in your browser.</b> The sliders and buttons run locally; nothing you choose is sent anywhere.</li>'
+    '<li><b>Hosting.</b> The files are served by Netlify. Like any web host, Netlify may record technical request data such as IP address, browser type and '
+    'time of request in its server logs, under <a href="https://www.netlify.com/privacy/">Netlify\'s privacy policy</a>. This project does not receive or use those logs.</li>'
+    '<li><b>While the site is private,</b> Netlify\'s own sign-in page controls access for the project team. That page is Netlify\'s, under its policy.</li>'
+    '<li><b>Data on the site.</b> Only public statistics from government and open-data publishers. No personal or business data.</li>'
+    '<li><b>Questions.</b> Open an issue on the <a href="%s">project repository</a> once it is public.</li></ul>'
+) % REPO_URL
+
+TERMS = (
+    '<h1>Terms of use</h1><ul class="plain">'
+    '<li><b>What this is.</b> An educational, non-commercial entry to the HydraDB Hackathon. It explains how fuel prices, driving, electric cars and transport CO2 '
+    'have moved together, and tests a small learning model.</li>'
+    '<li><b>Not advice.</b> Nothing here is financial, investment, policy, legal or engineering advice. The model was tested on few years and its result is fragile; '
+    'see the caveats on the <a href="index.html#caveats">results page</a>.</li>'
+    '<li><b>Correlation is not cause.</b> Correlations and learned link strengths describe how series moved together. They do not show that one causes another.</li>'
+    '<li><b>Licences.</b> The code is MIT-licensed. Each data file keeps its publisher\'s licence, listed with a citation on <a href="sources.html">Sources &amp; licences</a>. '
+    'If you reuse the data, follow those licences: credit the World Bank and Ember (CC BY 4.0), acknowledge EIA with the release date, and use EPA material for '
+    'non-commercial, scientific or educational purposes as EPA\'s policy states.</li>'
+    '<li><b>No warranty.</b> The site, code and derived numbers are provided "as is", without warranty of any kind. To the extent the law allows, the authors '
+    'are not liable for any loss arising from their use.</li>'
+    '<li><b>Names.</b> HydraDB and the data publishers are named only to identify the engine, the hackathon and the sources. None of them made, sponsored or endorsed this project.</li>'
+    '<li><b>Changes.</b> These pages may change. Every change is recorded in the repository history.</li></ul>'
+)
+
+AI = (
+    '<h1>AI disclosure</h1><ul class="plain">'
+    '<li><b>Who built it.</b> The code, analysis, page design and text were produced by an AI coding assistant, Claude Opus 5.5 running in Claude Code (Anthropic), '
+    'working under the direction of the project author. The author set the brief and the rules, and approved each outward step such as hosting and publishing.</li>'
+    '<li><b>No AI at runtime.</b> No AI model runs on this site or inside the learning loop. The learning is recursive least squares; its link strengths are stored in HydraDB.</li>'
+    '<li><b>No hand-typed numbers.</b> Every figure on the site is generated by code from the downloaded files and the result files in the repository; tests check that the '
+    'pages match those files.</li>'
+    '<li><b>Rule first.</b> The pass/fail rule was written and committed before the first run and was not changed after the result was known.</li>'
+    '<li><b>Mistakes are possible.</b> AI-written code and text can be wrong. The tests, the data check and the open repository are there so anyone can verify the work.</li></ul>'
+)
 
 
 def build():
@@ -685,7 +678,7 @@ def build():
                        "A HydraDB graph links crude oil, gasoline, miles driven, EVs, fuel use and transport CO2, and refits its links every year. Pre-registered walk-forward test."),
         "sources.html": ("Sources & licences — Fuel, Cars & Pollution", sources_page(c), "Every data file used, with URL, retrieval time, SHA-256 and licence."),
         "privacy.html": ("Privacy — Fuel, Cars & Pollution", PRIVACY, "Privacy notice."),
-        "terms.html": ("Terms — Fuel, Cars & Pollution", TERMS, "Terms of use."),
+        "terms.html": ("Terms of use — Fuel, Cars & Pollution", TERMS, "Terms of use."),
         "ai.html": ("AI disclosure — Fuel, Cars & Pollution", AI, "How AI was used to build this project."),
     }
     for fname, (title, body, desc) in pages.items():

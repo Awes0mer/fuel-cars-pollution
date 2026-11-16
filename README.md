@@ -104,6 +104,7 @@ Every number comes from a downloaded file; URL, retrieval time and SHA-256 are i
 
 | Source | Licence | Retrieved (UTC) | SHA-256 |
 |---|---|---|---|
+| [EIA Monthly Energy Review, landing page](https://www.eia.gov/totalenergy/data/monthly/) | Public domain (U.S. government publication) | 2026-11-16T07:32:04+00:00 | `e742e952e3e343b0…` |
 | [EIA Monthly Energy Review, Table 9.1: Crude Oil Price Summary](https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.01) | Public domain (U.S. government publication) | 2026-11-16T05:54:42+00:00 | `a88f975d78decb26…` |
 | [EIA Monthly Energy Review, Table 9.4: Retail Motor Gasoline and On-Highway Diesel Fuel Prices](https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.04) | Public domain (U.S. government publication) | 2026-11-16T05:54:44+00:00 | `55746937a68c817e…` |
 | [EIA Monthly Energy Review, Table 3.7c: Petroleum Consumption, Transportation and Electric Power Sectors](https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T03.07C) | Public domain (U.S. government publication) | 2026-11-16T05:54:46+00:00 | `914063d164e451b1…` |
@@ -113,9 +114,25 @@ Every number comes from a downloaded file; URL, retrieval time and SHA-256 are i
 | [FHWA Annual Vehicle Distance Traveled in Miles and Related Data, 2000-2024 (Table VM-1)](https://data.transportation.gov/api/v3/views/9ey8-2qc4/export.csv?accessType=DOWNLOAD) | U.S. government work | 2026-11-16T05:54:49+00:00 | `aa70a960532c53f7…` |
 | [World Bank World Development Indicators, SP.POP.TOTL (Population, total) for World and United States](https://api.worldbank.org/v2/country/WLD;USA/indicator/SP.POP.TOTL?format=json&per_page=500) | CC BY 4.0 | 2026-11-16T05:54:49+00:00 | `b027070945eb0549…` |
 | [Ember Monthly EV Sales Data (new car registrations by drivetrain)](https://files.ember-energy.org/public-downloads/transport/outputs/monthly_ev_sales.csv) | CC BY 4.0 | 2026-11-16T05:54:52+00:00 | `76e241d07d208647…` |
-| [EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants (updated 2026-09-04)](https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx) | U.S. government work; EPA web policy allows free distribution and use for non-commercial, scientific and educational purposes | 2026-11-16T05:54:53+00:00 | `c8087d3462594164…` |
+| [EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants](https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx) | U.S. government work; EPA web policy allows free distribution and use for non-commercial, scientific and educational purposes | 2026-11-16T05:54:53+00:00 | `c8087d3462594164…` |
 
 Flags: the latest year of each EIA Monthly Energy Review table is marked provisional; EPA highway-vehicle values for 2024–2025 are marked carried forward (EPA's workbook notes say those years repeat the 2023 inventory except power-plant NOx/SO2 and fires; a test checks the highway values equal 2023); calendar years with fewer than 12 months of Ember data are marked partial. Flagged values are shown but left out of correlations and scoring.
+
+### How to cite the data
+
+Release and update dates are read from the downloaded files; CC BY 4.0 sources list the changes made, as that licence requires.
+
+- U.S. Energy Information Administration. EIA Monthly Energy Review, landing page [data set], release of October 29, 2026. https://www.eia.gov/totalenergy/data/monthly/. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: No data used; the release date of the Monthly Energy Review is read from this page for the citations.
+- U.S. Energy Information Administration. EIA Monthly Energy Review, Table 9.1: Crude Oil Price Summary [data set], release of October 29, 2026. https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.01. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: Annual rows (YYYY13) of series RACPUUS; latest year marked provisional; changes computed as 100 x ln(year / previous year).
+- U.S. Energy Information Administration. EIA Monthly Energy Review, Table 9.4: Retail Motor Gasoline and On-Highway Diesel Fuel Prices [data set], release of October 29, 2026. https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.04. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: Annual rows of series RUUCUUS and RLUCUUS kept as two separate lines; latest year marked provisional.
+- U.S. Energy Information Administration. EIA Monthly Energy Review, Table 3.7c: Petroleum Consumption, Transportation and Electric Power Sectors [data set], release of October 29, 2026. https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T03.07C. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: Annual rows of series MGACPUS; latest year marked provisional.
+- U.S. Energy Information Administration. EIA Monthly Energy Review, Table 11.5: CO2 Emissions From Energy Consumption, Transportation Sector [data set], release of October 29, 2026. https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T11.05. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: Annual rows of series TEACEUS; latest year marked provisional.
+- U.S. Energy Information Administration. EIA Europe Brent Spot Price FOB, annual (RBRTE) [data set], release of 11/12/2026. https://www.eia.gov/dnav/pet/hist_xls/RBRTEa.xls. Retrieved 16 November 2026. Licence: Public domain (U.S. government publication) (https://www.eia.gov/about/copyrights_reuse.php). Changes made: Annual averages read as published.
+- U.S. Federal Highway Administration. FHWA Highway Statistics 2024, Table VM-203: Annual vehicle-miles of travel, 1957-2024 [data set], table dated November 2025. https://www.fhwa.dot.gov/policyinformation/statistics/2024/xls/vm203.xlsx. Retrieved 16 November 2026. Licence: U.S. government work (not subject to U.S. copyright, 17 U.S.C. 105) (https://www.usa.gov/government-copyright). Changes made: Grand total for all roads; 2009 left missing as published.
+- U.S. Federal Highway Administration. FHWA Annual Vehicle Distance Traveled in Miles and Related Data, 2000-2024 (Table VM-1) [data set]. https://data.transportation.gov/api/v3/views/9ey8-2qc4/export.csv?accessType=DOWNLOAD. Retrieved 16 November 2026. Licence: U.S. government work (https://catalog.data.gov/dataset/annual-vehicle-distance-traveled-in-miles-and-related-data-2000-2023-vm-1). Changes made: Registered vehicles summed over six vehicle types; for revised years the latest report year is used.
+- World Bank. World Bank World Development Indicators, SP.POP.TOTL (Population, total) for World and United States [data set], last updated 2026-11-11. https://api.worldbank.org/v2/country/WLD;USA/indicator/SP.POP.TOTL?format=json&per_page=500. Retrieved 16 November 2026. Licence: CC BY 4.0 (https://datacatalog.worldbank.org/search/dataset/0037712/World-Development-Indicators). Changes made: World and United States series selected; U.S. values used as the denominator for vehicles per 1,000 people.
+- Ember. Ember Monthly EV Sales Data (new car registrations by drivetrain) [data set]. https://files.ember-energy.org/public-downloads/transport/outputs/monthly_ev_sales.csv. Retrieved 16 November 2026. Licence: CC BY 4.0 (https://ember-energy.org/data/monthly-ev-sales-data). Changes made: Monthly registrations summed into calendar years; EV share computed as BEV+PHEV / all drivetrains; years with fewer than 12 months marked partial.
+- U.S. Environmental Protection Agency. EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants [data set], updated September 4, 2026. https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx. Retrieved 16 November 2026. Licence: U.S. government work; EPA web policy allows free distribution and use for non-commercial, scientific and educational purposes (https://www.epa.gov/web-policies-and-procedures/epa-disclaimers). Changes made: Highway Vehicles row for CO, NOx, VOC and PM2.5; 2024-2025 marked carried forward.
 
 Considered and not used:
 
@@ -160,6 +177,26 @@ python -m pytest -q        # tests, data check, privacy scan
 
 Re-downloading gives today's files; the committed raw files and their hashes are what these results used.
 
+## Software and licences
+
+Only open-source software is used, and the site loads nothing from other websites. `tests/test_licences.py` checks each licence below against the installed package metadata.
+
+| Software | Licence | Used for |
+|---|---|---|
+| [Python standard library](https://docs.python.org/3/license.html) | PSF License 2.0 | Downloads, parsing, learning loop, statistics, site build. |
+| [openpyxl](https://foss.heptapod.net/openpyxl/openpyxl) | MIT | Reads the FHWA and EPA .xlsx files. |
+| [et-xmlfile](https://foss.heptapod.net/openpyxl/et_xmlfile) | MIT | Installed with openpyxl. |
+| [xlrd](https://github.com/python-excel/xlrd) | BSD | Reads the EIA Brent .xls file. |
+| [Pillow](https://github.com/python-pillow/Pillow) | MIT-CMU | Draws the share image (og.png). |
+| [pytest](https://github.com/pytest-dev/pytest) | MIT | Runs the tests; not needed to view the site. |
+| [HydraDB v0.4.0](https://github.com/hydra-db/hydradb) | Elastic License 2.0 | Graph engine, self-hosted for the learning run under the hackathon's permission. Not included in this repository and not offered as a service. |
+
+Cite the graph engine as: HydraDB v0.4.0, https://github.com/hydra-db/hydradb. Licence: Elastic License 2.0 (https://www.elastic.co/licensing/elastic-license). Used self-hosted for this hackathon entry; not included in this repository.
+
 ## Licence
 
-Code: MIT (see `LICENSE`). Data keeps its own licence (see the table above). HydraDB is Elastic License 2.0 and is not included or redistributed.
+Code: MIT (see `LICENSE`). Data keeps its publishers' licences (see above). HydraDB is Elastic License 2.0 and is not included or redistributed.
+
+## Names and trademarks
+
+This is an independent entry to the HydraDB Hackathon. It is not made, sponsored or endorsed by HydraDB; the name is used only to identify the engine and the hackathon. Data publishers are named only to cite their data.

@@ -15,42 +15,34 @@ Edges: (Variable)-[:FEEDS]->(Link)-[:INTO]->(Variable), (Fit)-[:FITS]->(Variable
 
 
 class MemoryStore:
-    name = "memory"
 
     def __init__(self):
         self.nodes = {}
         self.edges = set()
-        self.ops = 0
 
     def put(self, label, rows):
         for r in rows:
-            self.ops += 1
             n = self.nodes.setdefault(r["id"], {"_label": label})
             n["_label"] = label
             n.update(r)
 
     def edge(self, rel, pairs):
         for a, b in pairs:
-            self.ops += 1
             self.edges.add((a, rel, b))
 
     def get(self, node_id, props):
-        self.ops += 1
         n = self.nodes[node_id]
         return {p: n.get(p) for p in props}
 
     def incoming(self, node_id, rel):
         """Ids of nodes with an edge (x)-[rel]->(node_id), sorted."""
-        self.ops += 1
         return sorted(a for (a, r, b) in self.edges if r == rel and b == node_id)
 
     def set_props(self, node_id, values):
-        self.ops += 1
         self.nodes[node_id].update(values)
 
 
 class HydraStore:
-    name = "hydradb"
 
     def __init__(self, client):
         self.c = client

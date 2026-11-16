@@ -8,7 +8,8 @@ import os
 
 from fcp.fetch import MANIFEST, ROOT
 from fcp.learn import results_path
-from fcp.sources import NOT_COVERED, REJECTED, SOURCES
+from fcp.cite import citations, software_citation
+from fcp.sources import NOT_COVERED, REJECTED, SOFTWARE, SOURCES
 from fcp.stats import CORR_OUT, SUMMARY_OUT
 
 README = os.path.join(ROOT, "README.md")
@@ -168,6 +169,13 @@ def render():
     a("")
     a("Flags: the latest year of each EIA Monthly Energy Review table is marked provisional; EPA highway-vehicle values for 2024–2025 are marked carried forward (EPA's workbook notes say those years repeat the 2023 inventory except power-plant NOx/SO2 and fires; a test checks the highway values equal 2023); calendar years with fewer than 12 months of Ember data are marked partial. Flagged values are shown but left out of correlations and scoring.")
     a("")
+    a("### How to cite the data")
+    a("")
+    a("Release and update dates are read from the downloaded files; CC BY 4.0 sources list the changes made, as that licence requires.")
+    a("")
+    for ct in citations():
+        a("- %s Changes made: %s" % (ct["text"], ct["changes"]))
+    a("")
     a("Considered and not used:")
     a("")
     for x in REJECTED:
@@ -205,9 +213,24 @@ def render():
     a("")
     a("Re-downloading gives today's files; the committed raw files and their hashes are what these results used.")
     a("")
+    a("## Software and licences")
+    a("")
+    a("Only open-source software is used, and the site loads nothing from other websites. `tests/test_licences.py` checks each licence below against the installed package metadata.")
+    a("")
+    a("| Software | Licence | Used for |")
+    a("|---|---|---|")
+    for x in SOFTWARE:
+        a("| [%s](%s) | %s | %s |" % (x["name"], x["url"], x["licence"], x["role"]))
+    a("")
+    a("Cite the graph engine as: %s" % software_citation())
+    a("")
     a("## Licence")
     a("")
-    a("Code: MIT (see `LICENSE`). Data keeps its own licence (see the table above). HydraDB is Elastic License 2.0 and is not included or redistributed.")
+    a("Code: MIT (see `LICENSE`). Data keeps its publishers' licences (see above). HydraDB is Elastic License 2.0 and is not included or redistributed.")
+    a("")
+    a("## Names and trademarks")
+    a("")
+    a("This is an independent entry to the HydraDB Hackathon. It is not made, sponsored or endorsed by HydraDB; the name is used only to identify the engine and the hackathon. Data publishers are named only to cite their data.")
     a("")
     return "\n".join(L)
 

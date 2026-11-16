@@ -7,7 +7,22 @@ found there. Numbers never come from this file; they come from the raw files.
 
 SOURCES = [
     {
+        "id": "eia_mer_index",
+        "author": "U.S. Energy Information Administration",
+        "title": "EIA Monthly Energy Review, landing page",
+        "publisher": "U.S. Energy Information Administration",
+        "url": "https://www.eia.gov/totalenergy/data/monthly/",
+        "filename": "index.html",
+        "region": "US",
+        "licence": "Public domain (U.S. government publication)",
+        "licence_url": "https://www.eia.gov/about/copyrights_reuse.php",
+        "licence_evidence": "U.S. government publications are in the public domain and are not subject to copyright protection.",
+        "changes": "No data used; the release date of the Monthly Energy Review is read from this page for the citations.",
+    },
+    {
         "id": "eia_mer_t0901",
+        "author": "U.S. Energy Information Administration",
+        "changes": "Annual rows (YYYY13) of series RACPUUS; latest year marked provisional; changes computed as 100 x ln(year / previous year).",
         "title": "EIA Monthly Energy Review, Table 9.1: Crude Oil Price Summary",
         "publisher": "U.S. Energy Information Administration",
         "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.01",
@@ -19,6 +34,8 @@ SOURCES = [
     },
     {
         "id": "eia_mer_t0904",
+        "author": "U.S. Energy Information Administration",
+        "changes": "Annual rows of series RUUCUUS and RLUCUUS kept as two separate lines; latest year marked provisional.",
         "title": "EIA Monthly Energy Review, Table 9.4: Retail Motor Gasoline and On-Highway Diesel Fuel Prices",
         "publisher": "U.S. Energy Information Administration",
         "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.04",
@@ -30,6 +47,8 @@ SOURCES = [
     },
     {
         "id": "eia_mer_t0307c",
+        "author": "U.S. Energy Information Administration",
+        "changes": "Annual rows of series MGACPUS; latest year marked provisional.",
         "title": "EIA Monthly Energy Review, Table 3.7c: Petroleum Consumption, Transportation and Electric Power Sectors",
         "publisher": "U.S. Energy Information Administration",
         "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T03.07C",
@@ -41,6 +60,8 @@ SOURCES = [
     },
     {
         "id": "eia_mer_t1105",
+        "author": "U.S. Energy Information Administration",
+        "changes": "Annual rows of series TEACEUS; latest year marked provisional.",
         "title": "EIA Monthly Energy Review, Table 11.5: CO2 Emissions From Energy Consumption, Transportation Sector",
         "publisher": "U.S. Energy Information Administration",
         "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T11.05",
@@ -52,6 +73,8 @@ SOURCES = [
     },
     {
         "id": "eia_brent_annual",
+        "author": "U.S. Energy Information Administration",
+        "changes": "Annual averages read as published.",
         "title": "EIA Europe Brent Spot Price FOB, annual (RBRTE)",
         "publisher": "U.S. Energy Information Administration",
         "url": "https://www.eia.gov/dnav/pet/hist_xls/RBRTEa.xls",
@@ -63,6 +86,8 @@ SOURCES = [
     },
     {
         "id": "fhwa_vm203",
+        "author": "U.S. Federal Highway Administration",
+        "changes": "Grand total for all roads; 2009 left missing as published.",
         "title": "FHWA Highway Statistics 2024, Table VM-203: Annual vehicle-miles of travel, 1957-2024",
         "publisher": "U.S. Federal Highway Administration",
         "url": "https://www.fhwa.dot.gov/policyinformation/statistics/2024/xls/vm203.xlsx",
@@ -74,6 +99,8 @@ SOURCES = [
     },
     {
         "id": "fhwa_vm1_2000_2024",
+        "author": "U.S. Federal Highway Administration",
+        "changes": "Registered vehicles summed over six vehicle types; for revised years the latest report year is used.",
         "title": "FHWA Annual Vehicle Distance Traveled in Miles and Related Data, 2000-2024 (Table VM-1)",
         "publisher": "U.S. Federal Highway Administration (data.transportation.gov)",
         "url": "https://data.transportation.gov/api/v3/views/9ey8-2qc4/export.csv?accessType=DOWNLOAD",
@@ -85,6 +112,8 @@ SOURCES = [
     },
     {
         "id": "worldbank_pop",
+        "author": "World Bank",
+        "changes": "World and United States series selected; U.S. values used as the denominator for vehicles per 1,000 people.",
         "title": "World Bank World Development Indicators, SP.POP.TOTL (Population, total) for World and United States",
         "publisher": "World Bank",
         "url": "https://api.worldbank.org/v2/country/WLD;USA/indicator/SP.POP.TOTL?format=json&per_page=500",
@@ -96,6 +125,8 @@ SOURCES = [
     },
     {
         "id": "ember_ev_monthly",
+        "author": "Ember",
+        "changes": "Monthly registrations summed into calendar years; EV share computed as BEV+PHEV / all drivetrains; years with fewer than 12 months marked partial.",
         "title": "Ember Monthly EV Sales Data (new car registrations by drivetrain)",
         "publisher": "Ember",
         "url": "https://files.ember-energy.org/public-downloads/transport/outputs/monthly_ev_sales.csv",
@@ -107,7 +138,9 @@ SOURCES = [
     },
     {
         "id": "epa_trends_tier1",
-        "title": "EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants (updated 2026-09-04)",
+        "author": "U.S. Environmental Protection Agency",
+        "changes": "Highway Vehicles row for CO, NOx, VOC and PM2.5; 2024-2025 marked carried forward.",
+        "title": "EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants",
         "publisher": "U.S. Environmental Protection Agency",
         "url": "https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx",
         "filename": "national_tier1_caps.xlsx",
@@ -154,8 +187,21 @@ NOT_COVERED = [
 ]
 
 
-def by_id(source_id):
-    for s in SOURCES:
-        if s["id"] == source_id:
-            return s
-    raise KeyError(source_id)
+# Every piece of third-party software the project uses, with its licence.
+# tests/test_licences.py checks each licence against the installed package metadata.
+SOFTWARE = [
+    {"name": "Python standard library", "package": None, "licence": "PSF License 2.0", "url": "https://docs.python.org/3/license.html",
+     "role": "Downloads, parsing, learning loop, statistics, site build."},
+    {"name": "openpyxl", "package": "openpyxl", "licence": "MIT", "url": "https://foss.heptapod.net/openpyxl/openpyxl",
+     "role": "Reads the FHWA and EPA .xlsx files."},
+    {"name": "et-xmlfile", "package": "et-xmlfile", "licence": "MIT", "url": "https://foss.heptapod.net/openpyxl/et_xmlfile",
+     "role": "Installed with openpyxl."},
+    {"name": "xlrd", "package": "xlrd", "licence": "BSD", "url": "https://github.com/python-excel/xlrd",
+     "role": "Reads the EIA Brent .xls file."},
+    {"name": "Pillow", "package": "pillow", "licence": "MIT-CMU", "url": "https://github.com/python-pillow/Pillow",
+     "role": "Draws the share image (og.png)."},
+    {"name": "pytest", "package": "pytest", "licence": "MIT", "url": "https://github.com/pytest-dev/pytest",
+     "role": "Runs the tests; not needed to view the site."},
+    {"name": "HydraDB v0.4.0", "package": None, "licence": "Elastic License 2.0", "url": "https://github.com/hydra-db/hydradb",
+     "role": "Graph engine, self-hosted for the learning run under the hackathon's permission. Not included in this repository and not offered as a service."},
+]

@@ -15,7 +15,6 @@
     { key: 'EVShare->FuelUse', src: 'EVShare', dst: 'FuelUse' },
     { key: 'FuelUse->CO2', src: 'FuelUse', dst: 'CO2' }
   ];
-  var NAMES = { Crude: 'crude oil', Gasoline: 'gasoline price', VMT: 'miles driven', EVShare: 'EV share', FuelUse: 'gasoline burned', CO2: 'transport CO2' };
   var uid = 0;
 
   function weightOf(w, key) { return w[key.split('->')[1]][key]; }

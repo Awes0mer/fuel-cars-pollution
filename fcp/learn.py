@@ -35,7 +35,6 @@ TARGETS = ["Gasoline", "FuelUse", "CO2"]
 NOWCAST_INPUTS = ("Crude", "Gasoline", "VMT", "EVShare")  # known in near real time for year t
 REQUIRED_INPUTS = ("Crude", "Gasoline", "VMT")  # a year is predicted only if these exist
 ID_TO_VAR = {v: k for k, v in VAR_IDS.items()}
-LINK_BY_ID = {lid: (s, t) for lid, s, t in LINKS}
 
 FIRST_YEAR = 1977
 DESIGN_YEARS = list(range(1982, 2005))

@@ -1,6 +1,16 @@
 {
  "files": [
   {
+   "id": "eia_mer_index",
+   "url": "https://www.eia.gov/totalenergy/data/monthly/",
+   "path": "data/raw/eia_mer_index/index.html",
+   "retrieved_at_utc": "2026-11-16T07:32:04+00:00",
+   "http_status": 200,
+   "content_type": "text/html; charset=UTF-8",
+   "bytes": 186652,
+   "sha256": "e742e952e3e343b0a2dca69073429172621ae221c8c9ea30ab50ace044460a34"
+  },
+  {
    "id": "eia_mer_t0901",
    "url": "https://www.eia.gov/totalenergy/data/browser/csv.php?tbl=T09.01",
    "path": "data/raw/eia_mer_t0901/T09.01.csv",
