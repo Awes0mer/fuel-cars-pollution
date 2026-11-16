@@ -363,7 +363,7 @@ def hero(c):
         '<h1 id="hero-h">Oil to tailpipe: a graph that refits its own links every year</h1>'
         '<p class="lede">Crude oil prices, pump prices, miles driven and electric cars feed a small graph that predicts the yearly change in U.S. transport CO2. '
         'Each link\'s strength lives in HydraDB and is refit from official data every year, so every miss changes the next guess.</p>'
-        '<p><a class="btn primary" href="#shock-flow">Push oil prices through the graph</a><a class="btn" href="walkthrough.html">Watch the 96-second walkthrough</a>'
+        '<p><a class="btn primary" href="#shock-flow">Push oil prices through the graph</a><a class="btn" href="walkthrough.html">Watch the walkthrough</a>'
         '<a class="btn" href="#caveats">Read the caveats first</a></p></div>'
         '<aside class="pylon" aria-label="Pre-registered test result"><div class="board"><div class="top">Pre-registered test</div>'
         '<div class="verdict %s">%s</div><p class="what">Average miss on the yearly CO2 change, in points. Lower is better. %d holdout years.</p>'
@@ -702,8 +702,8 @@ def walkthrough_page():
     with open(path, encoding="utf-8") as f:
         rows = [line.strip().split("|", 1) for line in f if "|" in line]
     caps = "".join("<tr><th scope=\"row\">%s</th><td>%s</td></tr>" % (esc(t), esc(x)) for t, x in rows)
-    return ('<h1>Walkthrough</h1><p class="lede">A 96-second captioned tour of the site: the price-change flowchart, the yearly learning replay, '
-            'the scores and their caveats, and the sources. The video has no sound; the captions are below as text.</p>'
+    return ('<h1>Walkthrough</h1><p class="lede">A short narrated, captioned tour of the site: the price-change flowchart, the yearly learning replay, '
+            'the scores and their caveats, and the sources. The captions are also below as text.</p>'
             '<video controls preload="metadata" width="1600" height="1000" style="width:100%%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff" '
             'aria-describedby="captions">'
             '<source src="walkthrough.mp4" type="video/mp4">Your browser cannot play this video; the captions are below.</video>'
@@ -763,7 +763,7 @@ def build():
         "privacy.html": ("Privacy — Fuel, Cars & Pollution", PRIVACY, "Privacy notice."),
         "terms.html": ("Terms of use — Fuel, Cars & Pollution", TERMS, "Terms of use."),
         "ai.html": ("AI disclosure — Fuel, Cars & Pollution", AI, "How AI was used to build this project."),
-        "walkthrough.html": ("Walkthrough — Fuel, Cars & Pollution", walkthrough_page(), "A 96-second captioned walkthrough of the project."),
+        "walkthrough.html": ("Walkthrough — Fuel, Cars & Pollution", walkthrough_page(), "A short narrated, captioned walkthrough of the project."),
     }
     for fname, (title, body, desc) in pages.items():
         with open(os.path.join(SITE, fname), "w", encoding="utf-8", newline="\n") as f:
