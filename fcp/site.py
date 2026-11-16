@@ -714,12 +714,12 @@ def walkthrough_page():
         rows = [line.strip().split("|", 1) for line in f if "|" in line]
     caps = "".join("<tr><th scope=\"row\">%s</th><td>%s</td></tr>" % (esc(t), esc(x)) for t, x in rows)
     return ('<h1>Walkthrough</h1><p class="lede">A short narrated, captioned tour of the site: the price-change flowchart, the yearly learning replay, '
-            'the scores and their caveats, and the sources. The captions are also below as text.</p>'
-            '<video controls preload="metadata" width="1600" height="1000" style="width:100%%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff" '
+            'the scores and their caveats, and the sources. Narration by Omer Orman. Pauses trimmed. Optional English captions are available using the CC button. Screenshots illustrate saved results, not a live backend run.</p>'
+            '<video controls playsinline preload="metadata" width="1600" height="1000" style="width:100%%;height:auto;border:1px solid var(--line);border-radius:12px;background:#fff" '
             'aria-describedby="captions">'
-            '<source src="walkthrough.mp4" type="video/mp4">Your browser cannot play this video; the captions are below.</video>'
-            '<div class="tablewrap" id="captions"><table class="text"><caption>Captions</caption><thead><tr><th scope="col">Time</th><th scope="col">Caption</th></tr></thead>'
-            '<tbody>%s</tbody></table></div>' % caps)
+            '<source src="walkthrough-clean-20261116.mp4" type="video/mp4"><track kind="captions" src="walkthrough.vtt" srclang="en" label="English">Your browser cannot play this video; the captions are below.</video>'
+            '<p><a href="walkthrough-clean-20261116.mp4" download>Download video</a> · <a href="walkthrough.vtt" download>Download timed captions</a></p><div class="tablewrap" id="captions"><table class="text"><caption>Captions</caption><thead><tr><th scope="col">Time</th><th scope="col">Caption</th></tr></thead>'
+            '<tbody>%s</tbody></table></div><p>Video editing and caption alignment assisted by ChatGPT and local Whisper transcription. This is Omer’s recorded voice, not a generated voice.</p>' % caps)
 
 
 PRIVACY = (

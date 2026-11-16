@@ -1,0 +1,97 @@
+WEBVTT
+
+00:00:00.060 --> 00:00:03.054
+Hi, my name is Omer Orman and this is Fuel,
+
+00:00:03.094 --> 00:00:06.714
+Cars and Pollution. Built for the HydraDB
+Hackathon.
+
+00:00:06.846 --> 00:00:09.378
+It connects oil prices, gasoline prices,
+
+00:00:09.518 --> 00:00:11.578
+driving, electric car sales,
+
+00:00:11.898 --> 00:00:13.338
+and transportation emissions.
+
+00:00:13.522 --> 00:00:15.061
+You can explore those connections,
+
+00:00:15.301 --> 00:00:16.561
+replay the learning process,
+
+00:00:16.701 --> 00:00:18.041
+and trace the numbers to
+
+00:00:18.041 --> 00:00:21.862
+their sources. HydraDB stores the
+relationships and their changing
+
+00:00:21.862 --> 00:00:23.297
+strengths. Each year the
+
+00:00:23.297 --> 00:00:25.617
+system predicts fuel use and emissions,
+
+00:00:25.977 --> 00:00:28.616
+compares those predictions with reported
+data, and updates
+
+00:00:28.616 --> 00:00:32.616
+its relationships. The next prediction uses
+those updated relationships.
+
+00:00:32.691 --> 00:00:33.281
+The experiment
+
+00:00:33.281 --> 00:00:36.160
+compares this approach with a nearest
+neighbor lookup,
+
+00:00:36.160 --> 00:00:38.312
+a frozen graph, and predicting no
+
+00:00:38.312 --> 00:00:40.612
+change. Across 18 holdout years,
+
+00:00:40.772 --> 00:00:44.857
+the graph's reported average error was 1.77,
+compared
+
+00:00:44.857 --> 00:00:50.283
+with 2.84 for no change. But the result has
+an important
+
+00:00:50.283 --> 00:00:52.131
+limitation. Remove the pandemic
+
+00:00:52.131 --> 00:00:54.681
+years and the graph loses to all three
+baselines.
+
+00:00:54.681 --> 00:00:57.781
+The uncertainty intervals also leave the
+ranking
+
+00:00:57.781 --> 00:01:01.321
+unsettled. This public demo replays saved
+results.
+
+00:01:01.420 --> 00:01:04.089
+Its scenario controls show how learned
+
+00:01:04.089 --> 00:01:06.700
+relationships, not proven causes.
+
+00:01:06.751 --> 00:01:10.574
+The goal is a transparent research tool.
+Explore the
+
+00:01:10.574 --> 00:01:12.334
+evidence, inspect the learning,
+
+00:01:12.514 --> 00:01:15.594
+and see exactly where the model succeeds or
+fails.
