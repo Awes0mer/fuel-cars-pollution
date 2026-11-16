@@ -46,6 +46,58 @@ output{font-weight:700}
 footer{border-top:1px solid var(--line);margin-top:40px;background:var(--soft)}
 footer .in{padding-top:14px;padding-bottom:24px;font-size:.88rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
+.flowcard{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fbfdff,#f4f7fa);padding:16px 18px 12px;margin:22px 0;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+.flow-h{border:0;padding:0;margin:.2rem 0 .3rem;font-size:1.3rem}
+.flow-lede{margin:.2rem 0 .8rem;color:var(--muted)}
+.k-up{color:#9a4100;font-weight:600}.k-down{color:#0a4f96;font-weight:600}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.presets button,.replay-controls button{font:inherit;font-size:.92rem;padding:7px 14px;border-radius:999px;border:1px solid #9aa3ad;background:#fff;color:var(--fg);cursor:pointer;min-height:40px}
+.presets button:hover,.replay-controls button:hover{background:#eef4fb;border-color:var(--accent)}
+.presets button:focus-visible,.replay-controls button:focus-visible,input[type=range]:focus-visible{outline:3px solid #f2b600;outline-offset:2px}
+.flow-stage{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"crude gas . ." ". vmt fuel co2" ". ev . .";column-gap:92px;row-gap:18px;align-items:center;padding:10px 4px 14px}
+.flow-wires{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.fnode{position:relative;z-index:1;background:#fff;border:2px solid #c9d1da;border-radius:12px;padding:8px 10px;text-align:center;transition:border-color .35s,background-color .35s;min-width:0}
+.fnode[data-node=Crude]{grid-area:crude}.fnode[data-node=Gasoline]{grid-area:gas}.fnode[data-node=VMT]{grid-area:vmt}
+.fnode[data-node=EVShare]{grid-area:ev}.fnode[data-node=FuelUse]{grid-area:fuel}.fnode[data-node=CO2]{grid-area:co2}
+.fnode .nm{font-size:.8rem;color:var(--muted);line-height:1.2}
+.fnode .valrow{font-size:1.3rem;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fnode .arr{font-size:.8rem;vertical-align:2px}
+.fnode .sub{font-size:.74rem;color:var(--muted);line-height:1.2;margin-top:2px;min-height:1.2em}
+.fnode.up{border-color:#d9822b;background:#fff8f1}.fnode.up .valrow{color:#9a4100}
+.fnode.down{border-color:#3d7fc4;background:#f2f7fd}.fnode.down .valrow{color:#0a4f96}
+.fnode.flash{animation:flash .7s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(242,182,0,.75);transform:scale(1.05)}100%{box-shadow:0 0 0 14px rgba(242,182,0,0);transform:scale(1)}}
+.wire-bg{fill:none;stroke:#fff;stroke-width:14px;stroke-linecap:round}
+.wire{fill:none;stroke-linecap:round;transition:stroke-width .6s ease,stroke .4s}
+.wire.flat{stroke:#b9c1ca}.wire.up{stroke:#e8a465}.wire.down{stroke:#7aaadb}
+.mk-flat{fill:#9aa3ad}.mk-up{fill:#c9661a}.mk-down{fill:#3d7fc4}
+.dots.up circle{fill:#b34d00}.dots.down circle{fill:#0b5cad}
+.wire-label{font-size:12.5px;font-weight:700;fill:#3d4650;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.flow-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 18px;margin:8px 0}
+.flow-controls label,.yr-slider{font-size:.9rem;color:var(--muted)}
+.flow-controls output{font-weight:700;color:var(--fg);margin-left:4px}
+input[type=range]{width:100%;accent-color:#0b5cad;min-height:28px}
+.flow-summary{font-weight:600;min-height:3em;margin:.4rem 0}
+.steps{list-style:none;padding:0;margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:6px}
+.step{padding:5px 12px;border-radius:999px;background:#e9edf1;color:#4b5560;font-size:.86rem;transition:background-color .3s,color .3s}
+.step.on{background:#0b5cad;color:#fff}
+.replay-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+.yr-slider{flex:1 1 220px;display:flex;align-items:center;gap:8px}
+.lr-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 12px;margin:8px 0;padding:0}
+.lr-panel div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.lr-panel dt{font-size:.78rem;color:var(--muted)}.lr-panel dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.err-strip .bar{fill:#0b5cad;cursor:pointer}.err-strip .bar.cur{fill:#f2b600}
+.err-strip .nc-dot{fill:#5b6570}.err-strip .band{fill:#e6eef8}.err-strip .band-label,.err-strip .yr{font-size:12px;fill:#4b5560}
+figure.strip{margin:8px 0 4px}
+@media (max-width:699px){
+.flow-stage{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"crude . ." "gas vmt ev" "fuel fuel fuel" "co2 co2 co2";column-gap:8px;row-gap:46px}
+.fnode[data-node=FuelUse],.fnode[data-node=CO2]{justify-self:center;width:64%}
+.fnode .valrow{font-size:1rem;white-space:normal;overflow-wrap:anywhere}
+.fnode{padding:7px 5px}
+.fnode .nm{font-size:.72rem}
+.flowcard{padding:14px 12px 10px}
+}
+@media (prefers-reduced-motion:reduce){.wire,.fnode,.step{transition:none}.fnode.flash{animation:none}}
 .src{border:1px solid var(--line);border-radius:6px;padding:4px 14px 10px;margin:12px 0}
 .src h3{margin:.6rem 0 .3rem;font-size:1.02rem}
 .src dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:.92rem}

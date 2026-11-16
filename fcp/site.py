@@ -85,6 +85,58 @@ output{font-weight:700}
 footer{border-top:1px solid var(--line);margin-top:40px;background:var(--soft)}
 footer .in{padding-top:14px;padding-bottom:24px;font-size:.88rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
+.flowcard{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fbfdff,#f4f7fa);padding:16px 18px 12px;margin:22px 0;box-shadow:0 1px 3px rgba(16,24,40,.06)}
+.flow-h{border:0;padding:0;margin:.2rem 0 .3rem;font-size:1.3rem}
+.flow-lede{margin:.2rem 0 .8rem;color:var(--muted)}
+.k-up{color:#9a4100;font-weight:600}.k-down{color:#0a4f96;font-weight:600}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 10px}
+.presets button,.replay-controls button{font:inherit;font-size:.92rem;padding:7px 14px;border-radius:999px;border:1px solid #9aa3ad;background:#fff;color:var(--fg);cursor:pointer;min-height:40px}
+.presets button:hover,.replay-controls button:hover{background:#eef4fb;border-color:var(--accent)}
+.presets button:focus-visible,.replay-controls button:focus-visible,input[type=range]:focus-visible{outline:3px solid #f2b600;outline-offset:2px}
+.flow-stage{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-template-areas:"crude gas . ." ". vmt fuel co2" ". ev . .";column-gap:92px;row-gap:18px;align-items:center;padding:10px 4px 14px}
+.flow-wires{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible;pointer-events:none;z-index:0}
+.fnode{position:relative;z-index:1;background:#fff;border:2px solid #c9d1da;border-radius:12px;padding:8px 10px;text-align:center;transition:border-color .35s,background-color .35s;min-width:0}
+.fnode[data-node=Crude]{grid-area:crude}.fnode[data-node=Gasoline]{grid-area:gas}.fnode[data-node=VMT]{grid-area:vmt}
+.fnode[data-node=EVShare]{grid-area:ev}.fnode[data-node=FuelUse]{grid-area:fuel}.fnode[data-node=CO2]{grid-area:co2}
+.fnode .nm{font-size:.8rem;color:var(--muted);line-height:1.2}
+.fnode .valrow{font-size:1.3rem;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fnode .arr{font-size:.8rem;vertical-align:2px}
+.fnode .sub{font-size:.74rem;color:var(--muted);line-height:1.2;margin-top:2px;min-height:1.2em}
+.fnode.up{border-color:#d9822b;background:#fff8f1}.fnode.up .valrow{color:#9a4100}
+.fnode.down{border-color:#3d7fc4;background:#f2f7fd}.fnode.down .valrow{color:#0a4f96}
+.fnode.flash{animation:flash .7s ease-out}
+@keyframes flash{0%{box-shadow:0 0 0 0 rgba(242,182,0,.75);transform:scale(1.05)}100%{box-shadow:0 0 0 14px rgba(242,182,0,0);transform:scale(1)}}
+.wire-bg{fill:none;stroke:#fff;stroke-width:14px;stroke-linecap:round}
+.wire{fill:none;stroke-linecap:round;transition:stroke-width .6s ease,stroke .4s}
+.wire.flat{stroke:#b9c1ca}.wire.up{stroke:#e8a465}.wire.down{stroke:#7aaadb}
+.mk-flat{fill:#9aa3ad}.mk-up{fill:#c9661a}.mk-down{fill:#3d7fc4}
+.dots.up circle{fill:#b34d00}.dots.down circle{fill:#0b5cad}
+.wire-label{font-size:12.5px;font-weight:700;fill:#3d4650;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.flow-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px 18px;margin:8px 0}
+.flow-controls label,.yr-slider{font-size:.9rem;color:var(--muted)}
+.flow-controls output{font-weight:700;color:var(--fg);margin-left:4px}
+input[type=range]{width:100%;accent-color:#0b5cad;min-height:28px}
+.flow-summary{font-weight:600;min-height:3em;margin:.4rem 0}
+.steps{list-style:none;padding:0;margin:4px 0 10px;display:flex;flex-wrap:wrap;gap:6px}
+.step{padding:5px 12px;border-radius:999px;background:#e9edf1;color:#4b5560;font-size:.86rem;transition:background-color .3s,color .3s}
+.step.on{background:#0b5cad;color:#fff}
+.replay-controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0}
+.yr-slider{flex:1 1 220px;display:flex;align-items:center;gap:8px}
+.lr-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 12px;margin:8px 0;padding:0}
+.lr-panel div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.lr-panel dt{font-size:.78rem;color:var(--muted)}.lr-panel dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.err-strip .bar{fill:#0b5cad;cursor:pointer}.err-strip .bar.cur{fill:#f2b600}
+.err-strip .nc-dot{fill:#5b6570}.err-strip .band{fill:#e6eef8}.err-strip .band-label,.err-strip .yr{font-size:12px;fill:#4b5560}
+figure.strip{margin:8px 0 4px}
+@media (max-width:699px){
+.flow-stage{grid-template-columns:repeat(3,minmax(0,1fr));grid-template-areas:"crude . ." "gas vmt ev" "fuel fuel fuel" "co2 co2 co2";column-gap:8px;row-gap:46px}
+.fnode[data-node=FuelUse],.fnode[data-node=CO2]{justify-self:center;width:64%}
+.fnode .valrow{font-size:1rem;white-space:normal;overflow-wrap:anywhere}
+.fnode{padding:7px 5px}
+.fnode .nm{font-size:.72rem}
+.flowcard{padding:14px 12px 10px}
+}
+@media (prefers-reduced-motion:reduce){.wire,.fnode,.step{transition:none}.fnode.flash{animation:none}}
 .src{border:1px solid var(--line);border-radius:6px;padding:4px 14px 10px;margin:12px 0}
 .src h3{margin:.6rem 0 .3rem;font-size:1.02rem}
 .src dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:.92rem}
@@ -190,6 +242,7 @@ def results_section(c):
     out.append('<p class="lede">Crude oil → gasoline → fuel use → transport CO2, with miles driven and electric-car adoption feeding in. '
                'The strength of each link is stored in HydraDB and refit every year, so each year\'s correction changes the next prediction. '
                'Tested walk-forward against a plain vector-store lookup and a "no change" guess, on years not used to design it.</p>')
+    out.append(shock_flow(c))
     out.append('<div class="box"><p class="verdict">Pre-registered verdict: <span class="%s">%s</span> (all four parts)</p>'
                '<p>Holdout 2005–2024, n = %d years. Holdout MAE of the U.S. transport-CO2 change: graph <b>%s</b> pp, no change %s, k-NN %s, frozen graph %s. '
                'The rule was <a href="%s/blob/main/PREREGISTRATION.md">committed before any run</a>.</p></div>' % (
@@ -206,6 +259,7 @@ def results_section(c):
                    ex["n"], pct(ex["graph"]), lw(ex, "no_change"), pct(ex["no_change"]), lw(ex, "knn"), pct(ex["knn"]), lw(ex, "frozen_graph"), pct(ex["frozen_graph"]),
                    "Every" if all(v["low"] <= 0 <= v["high"] for v in r["bootstrap_95"].values()) else "Not every", s["holdout_n"], wins["no_change"], s["holdout_n"], wins["knn"], s["holdout_n"], esc(worst),
                    pct(sc["knn"]["design_mae"]), pct(sc["graph"]["design_mae"])))
+    out.append(replay_flow(c))
     out.append('<h3>Scores</h3><div class="tablewrap"><table><caption>MAE of the predicted yearly change in U.S. transport CO2, percentage points of 100·ln change. '
                'Lower is better. Design years 1982–2004 were used to pick settings; holdout years were not.</caption>'
                '<thead><tr><th scope="col">Model</th><th scope="col">Holdout MAE</th><th scope="col">n</th><th scope="col">Holdout MAE without 2020–21 (n=%d)</th><th scope="col">Design MAE (n=%d)</th></tr></thead><tbody>%s</tbody></table></div>' % (
@@ -292,15 +346,105 @@ def how_section(c):
            '<li><b>Repeat</b> for the next year with the corrected weights.</li></ol>' % r["tuning"]["graph_lambda"],
            '<p>Links are modelled as <b>nodes</b>, not edges: HydraDB v0.4.0 deduplicates edges on (source, target, type), so a link with a changing weight and a history needs its own node. '
            'The same code runs on an in-memory store; the two runs must agree (parity).</p>',
-           diagram(w),
            '<p class="note"><b>Weak link:</b> the EV share → fuel use weight is not pinned down. It is learned from %d years only and swung between %.2f and %.2f after 2012. '
            'Read it as "unknown", not as a measured effect of EVs.</p>' % (c.summ["ev_link_weight_range_2012_on"]["ev_years_used"],
                                                                             c.summ["ev_link_weight_range_2012_on"]["min"], c.summ["ev_link_weight_range_2012_on"]["max"]),
            line_chart("weights", "Learned link strengths, refit every year", "Each line is one link weight in HydraDB after each yearly refit, 1977 to the last year with data.",
                       lines, "weight", "Source: results/learning_results.json (link_weights_by_year), learned from the EIA, FHWA and Ember files listed on the sources page.",
-                      y_zero=True, digits=3),
-           whatif(w)]
+                      y_zero=True, digits=3)]
     return "".join(out)
+
+
+FLOW_NODES = [
+    ("Crude", "Crude oil price"),
+    ("Gasoline", "Gasoline price"),
+    ("VMT", "Miles driven"),
+    ("EVShare", "EV share of new cars"),
+    ("FuelUse", "Gasoline burned"),
+    ("CO2", "Transport CO2"),
+]
+
+
+def flow_stage(label, sub=False):
+    nodes = "".join(
+        '<div class="fnode flat" data-node="%s"><div class="nm">%s</div>'
+        '<div class="valrow"><span class="arr" aria-hidden="true">●</span> <span class="val">—</span></div>%s</div>' % (
+            k, esc(n), '<div class="sub"></div>' if sub else "")
+        for k, n in FLOW_NODES)
+    return '<div class="flow-stage" role="group" aria-label="%s"><svg class="flow-wires" aria-hidden="true"></svg>%s</div>' % (esc(label), nodes)
+
+
+def flow_data(c):
+    r = c.res
+    years = []
+    prev = None
+    for p in r["per_year"]:
+        note = ""
+        if prev is not None and p["year"] != prev + 1:
+            note = "%s skipped: no prediction because miles driven for 2009 is missing in the FHWA file." % (
+                "%d–%d" % (prev + 1, p["year"] - 1) if p["year"] - 1 > prev + 1 else str(prev + 1))
+        years.append({"year": p["year"], "period": p["period"], "inputs": p["inputs"], "pred": p["graph"], "pred_fuel": p["graph_fuel"],
+                      "actual": p["actual_co2"], "actual_fuel": p["actual_fuel"], "knn": p["knn"], "note": note})
+        prev = p["year"]
+    data = {"weights": r["final_weights"], "history": r["link_weights_by_year"], "years": years,
+            "start_year": years[0]["year"], "holdout_start": min(r["config"]["holdout_years_scored"])}
+    return json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
+
+
+def shock_flow(c):
+    w = c.res["final_weights"]
+    last = max(p["year"] for p in c.res["per_year"] if p["actual_co2"] is not None)
+    return (
+        '<section class="flowcard" id="shock-flow" aria-labelledby="shock-h">'
+        '<h2 id="shock-h" class="flow-h">Follow a price change through the graph</h2>'
+        '<p class="flow-lede">Push oil prices up or down and watch the effect travel link by link: crude oil → gasoline price → gasoline burned → transport CO2. '
+        'Miles driven and electric cars feed in too. Wire thickness is the learned link strength; moving dots show which way each link pushes '
+        '(<span class="k-up">orange ▲ pushes up</span>, <span class="k-down">blue ▼ pushes down</span>).</p>'
+        '<div class="presets" role="group" aria-label="Scenarios">'
+        '<button type="button" data-preset="50,0,0">Oil +50%%</button>'
+        '<button type="button" data-preset="-50,0,0">Oil −50%%</button>'
+        '<button type="button" data-preset="0,-10,0">Driving −10%%</button>'
+        '<button type="button" data-preset="0,0,5">EV share +5 pts</button>'
+        '<button type="button" data-preset="30,2,1">Oil +30%%, driving +2%%, EVs +1 pt</button>'
+        '<button type="button" data-preset="0,0,0">Reset</button></div>'
+        '%s'
+        '<div class="flow-controls">'
+        '<label>Crude oil price change <output id="fx-crude-v"></output><input id="fx-crude" type="range" min="-60" max="60" step="1" value="30"></label>'
+        '<label>Miles driven change <output id="fx-vmt-v"></output><input id="fx-vmt" type="range" min="-15" max="15" step="0.5" value="0"></label>'
+        '<label>EV share of new cars change <output id="fx-ev-v"></output><input id="fx-ev" type="range" min="-5" max="10" step="0.5" value="0"></label></div>'
+        '<p class="flow-summary" aria-live="polite"></p>'
+        '<p class="note">What the links say, in plain words: oil prices pass strongly into pump prices (×%.2f), but year-to-year pump price swings barely changed how much gasoline '
+        'was burned (×%.2f). Miles driven did (×%.2f). Effects only: the yearly trend terms are left out so you see what each change does. '
+        'This is arithmetic on the weights learned through %d; it was not tested as a scenario model, and co-movement is not proof of cause.</p>'
+        '<noscript><p class="note">The animation needs JavaScript. The learned weights are in the table below.</p></noscript>'
+        '<p class="source">Source: learned link weights in <code>results/learning_results.json</code> (<code>final_weights</code>), fitted on EIA, FHWA and Ember files listed on the '
+        '<a href="sources.html">sources page</a>.</p>%s</section>'
+    ) % (flow_stage("Price-change flowchart: crude oil, gasoline price, miles driven and EV share feed gasoline burned, which feeds transport CO2"),
+         w["Gasoline"]["Crude->Gasoline"], w["FuelUse"]["Gasoline->FuelUse"], w["FuelUse"]["VMT->FuelUse"], last, weights_table(w))
+
+
+def replay_flow(c):
+    r = c.res
+    return (
+        '<section class="flowcard" id="learn-flow" aria-labelledby="learn-h">'
+        '<h2 id="learn-h" class="flow-h">Watch it learn, year by year</h2>'
+        '<p class="flow-lede">Each year the graph runs the same loop. Press play to replay %d–%d: the wires change thickness as HydraDB stores the refitted link strengths.</p>'
+        '<ol class="steps" aria-label="The yearly loop"><li class="step">1 Predict with last year\'s links</li><li class="step">2 Compare with EIA\'s figure</li>'
+        '<li class="step">3 Refit the links (λ = %s)</li><li class="step">4 Write links + prediction to HydraDB</li></ol>'
+        '<div class="replay-controls"><button type="button" id="lr-prev" aria-label="Previous year">◀</button>'
+        '<button type="button" id="lr-play" aria-pressed="false">Play</button><button type="button" id="lr-next" aria-label="Next year">▶</button>'
+        '<label class="yr-slider">Year <input id="lr-year" type="range" min="0" max="0" step="1" value="0"></label></div>'
+        '%s'
+        '<dl class="lr-panel"><div><dt>Year</dt><dd data-f="year"></dd></div><div><dt>Period</dt><dd data-f="period"></dd></div>'
+        '<div><dt>Predicted CO2 change</dt><dd data-f="pred"></dd></div><div><dt>Actual (EIA)</dt><dd data-f="actual"></dd></div>'
+        '<div><dt>Graph error</dt><dd data-f="err"></dd></div><div><dt>No-change error</dt><dd data-f="nc"></dd></div><div><dt>k-NN error</dt><dd data-f="knn"></dd></div></dl>'
+        '<p class="note" data-f="note" aria-live="polite"></p>'
+        '<figure class="strip"><figcaption class="ctitle">Graph error by year (bars) and no-change error (dots), points of CO2 change; click a bar to jump there</figcaption>'
+        '<svg class="err-strip chart" role="img" aria-label="Absolute error of the graph per year, with the no-change error as dots; the data table is under the Predicted vs actual chart."></svg>'
+        '<p class="source">Source: <code>results/learning_results.json</code> (<code>per_year</code>, <code>link_weights_by_year</code>). Data tables: '
+        '<a href="#pred">predicted vs actual</a> and <a href="#weights">learned link strengths</a>.</p></figure></section>'
+    ) % (r["per_year"][0]["year"], r["per_year"][-1]["year"], r["tuning"]["graph_lambda"],
+         flow_stage("Learning-replay flowchart showing one year's inputs, predictions and link strengths", sub=True))
 
 
 def whatif(w):
@@ -412,7 +556,8 @@ def build():
     c = Ctx()
     os.makedirs(SITE, exist_ok=True)
     pages = {
-        "index.html": ("Fuel, Cars & Pollution — a self-refitting HydraDB graph", results_section(c) + how_section(c) + data_section(c),
+        "index.html": ("Fuel, Cars & Pollution — a self-refitting HydraDB graph", results_section(c) + how_section(c) + data_section(c) +
+                       '<script type="application/json" id="flow-data">%s</script><script src="flow.js" defer></script>' % flow_data(c),
                        "A HydraDB graph links crude oil, gasoline, miles driven, EVs, fuel use and transport CO2, and refits its links every year. Pre-registered walk-forward test."),
         "sources.html": ("Sources & licences — Fuel, Cars & Pollution", sources_page(c), "Every data file used, with URL, retrieval time, SHA-256 and licence."),
         "privacy.html": ("Privacy — Fuel, Cars & Pollution", PRIVACY, "Privacy notice."),
@@ -426,6 +571,9 @@ def build():
         f.write(CSS.strip() + "\n")
     with open(os.path.join(SITE, "favicon.svg"), "w", encoding="utf-8", newline="\n") as f:
         f.write(FAVICON + "\n")
+    with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "flow.js"), encoding="utf-8") as src, \
+            open(os.path.join(SITE, "flow.js"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(src.read())
     print("site built:", ", ".join(sorted(pages)))
 
 

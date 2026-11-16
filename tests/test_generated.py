@@ -65,3 +65,23 @@ def test_holdout_years_not_used_for_tuning():
     with open(results_path(), encoding="utf-8") as f:
         r = json.load(f)
     assert max(r["tuning"]["design_years"]) < min(r["config"]["holdout_years_scored"])
+
+
+def test_flowchart_data_matches_results():
+    import re
+
+    with open(os.path.join(ROOT, "site", "index.html"), encoding="utf-8") as f:
+        html = f.read()
+    m = re.search(r'<script type="application/json" id="flow-data">(.*?)</script>', html, re.S)
+    assert m, "flowchart data block missing"
+    data = json.loads(m.group(1).replace("<\\/", "</"))
+    with open(results_path(), encoding="utf-8") as f:
+        r = json.load(f)
+    assert data["weights"] == r["final_weights"]
+    assert data["history"] == r["link_weights_by_year"]
+    assert [y["year"] for y in data["years"]] == [p["year"] for p in r["per_year"]]
+    assert all(y["pred"] == p["graph"] for y, p in zip(data["years"], r["per_year"]))
+    with open(os.path.join(ROOT, "site", "flow.js"), encoding="utf-8") as f:
+        js = f.read()
+    js = js.replace("http://www.w3.org/2000/svg", "")  # SVG namespace name, not a request
+    assert "http://" not in js and "https://" not in js, "flow.js must not load anything from another host"
