@@ -169,11 +169,14 @@ def render():
     if os.path.exists(run4):
         p4 = load(run4)
         keys = ("graph", "no_change", "knn", "frozen_graph", "direct_regression", "graph_fuel", "graph_gasoline")
-        diff = max(abs(x[k] - y[k]) for x, y in zip(p4["per_year"], r["per_year"]) for k in keys if x[k] is not None)
-        same = diff == 0 and p4["link_weights_by_year"] == r["link_weights_by_year"]
+        years_match = [x["year"] for x in p4["per_year"]] == [y["year"] for y in r["per_year"]]
+        pairs = [(x[k], y[k]) for x, y in zip(p4["per_year"], r["per_year"]) for k in keys] if years_match else []
+        numeric = [abs(u - v) for u, v in pairs if u is not None and v is not None]
+        diff = max(numeric) if numeric else float("nan")
+        same = years_match and all(u == v for u, v in pairs) and p4["link_weights_by_year"] == r["link_weights_by_year"]
         outcome = ("every prediction and link weight is identical to run 4 (largest prediction difference 0)" if same else
-                   "results differ from run 4: largest prediction difference {:.3g}, link-weight history {}".format(
-                       diff, "same" if p4["link_weights_by_year"] == r["link_weights_by_year"] else "different"))
+                   "results differ from run 4: {}, largest prediction difference {:.3g}, link-weight history {}".format(
+                       "same years" if years_match else "different years", diff, "same" if p4["link_weights_by_year"] == r["link_weights_by_year"] else "different"))
         a("4. Run 5, the result above, fixes a storage bug a CodeRabbit review found: link-history and prediction node ids overlapped "
           "for two links, so HydraDB merged those node pairs. Predictions never read those nodes; {}. Run 4 is archived next to run 3.".format(outcome))
     a("")

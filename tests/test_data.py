@@ -143,3 +143,17 @@ def test_fetch_scrubs_before_storing(tmp_path, monkeypatch):
     assert entry["sha256"] == hashlib.sha256(stored).hexdigest()
     assert entry["sha256_as_downloaded"] == hashlib.sha256(buf.getvalue()).hexdigest()
     assert not list((tmp_path / "raw" / "t").glob("*.part"))
+
+
+def test_scrubber_leaves_author_like_text_in_cdata_and_comments():
+    from fcp.scrub import author_values, clear_authors
+
+    xml = (b'<cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" '
+           b'xmlns:dc="http://purl.org/dc/elements/1.1/">'
+           b'<dc:description><![CDATA[<dc:creator>Template</dc:creator>]]></dc:description>'
+           b'<!-- <cp:lastModifiedBy>Note</cp:lastModifiedBy> -->'
+           b'<dc:creator>Real Person</dc:creator></cp:coreProperties>')
+    out = clear_authors(xml)
+    assert author_values(out) == []
+    assert b"<![CDATA[<dc:creator>Template</dc:creator>]]>" in out and b"<cp:lastModifiedBy>Note</cp:lastModifiedBy>" in out
+    assert b"Real Person" not in out

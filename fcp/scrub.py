@@ -48,7 +48,15 @@ def clear_authors(core_xml):
     """Empty every author element's content (whatever its spelling or character
     references); the rest of the XML text is left byte-for-byte as it was. The
     namespace-aware check below confirms nothing was missed."""
-    out = AUTHOR_ELEMENT.sub(rb"\1\4", core_xml)
+    # text that only looks like an author tag inside a CDATA section or a comment is not an element
+    protected = [m.span() for m in re.finditer(rb"<!\[CDATA\[.*?\]\]>|<!--.*?-->", core_xml, re.S)]
+
+    def empty(m):
+        if any(a <= m.start() < b for a, b in protected):
+            return m.group(0)
+        return m.group(1) + m.group(4)
+
+    out = AUTHOR_ELEMENT.sub(empty, core_xml)
     if author_values(out):
         raise ValueError("author field left after scrubbing")
     return out
