@@ -662,9 +662,11 @@ def sources_page(c):
             '<dt>Changes made</dt><dd>%s</dd>'
             '<dt>File</dt><dd><a href="%s">%s</a></dd>'
             '<dt>Retrieved</dt><dd>%s UTC, %s bytes</dd>'
-            '<dt>SHA-256</dt><dd><code>%s</code></dd></dl></section>' % (
+            '<dt>SHA-256</dt><dd><code>%s</code>%s</dd></dl></section>' % (
                 esc(s["title"]), esc(ct["text"]), esc(s["licence"]), esc(s["licence_url"]), esc(s["licence_evidence"]),
-                esc(ct["changes"]), esc(s["url"]), esc(s["url"]), esc(m["retrieved_at_utc"]), "{:,}".format(m["bytes"]), esc(m["sha256"])))
+                esc(ct["changes"]), esc(s["url"]), esc(s["url"]), esc(m["retrieved_at_utc"]), "{:,}".format(m["bytes"]), esc(m["sha256"]),
+                ('<br>Stored copy: author names removed from the file metadata; data unchanged. SHA-256 as downloaded: <code>%s</code>' % esc(m["sha256_as_downloaded"]))
+                if m.get("sha256_as_downloaded") else ""))
     sw = "".join('<tr><td><a href="%s">%s</a></td><td>%s</td><td>%s</td></tr>' % (esc(x["url"]), esc(x["name"]), esc(x["licence"]), esc(x["role"]))
                  for x in SOFTWARE)
     rej = "".join("<li><b>%s</b>: %s</li>" % (esc(x["name"]), esc(x["reason"])) for x in REJECTED)

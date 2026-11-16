@@ -1,0 +1,85 @@
+"""Remove people's names from the author fields of downloaded Office files.
+
+Official .xlsx files carry the names of the agency staff who saved them in
+docProps/core.xml (dc:creator, cp:lastModifiedBy). This project keeps no
+personal data, so those two fields are emptied. Every other part of the file
+is copied unchanged, and the CRC-32 of each unchanged part is recorded so a
+test can prove the data itself was not touched.
+
+Usage: python -m fcp.scrub   (rewrites the .xlsx files in data/raw in place and
+                             updates data/manifest.json)
+"""
+
+import hashlib
+import io
+import json
+import re
+import zipfile
+
+from fcp.fetch import MANIFEST, ROOT
+
+AUTHOR_TAGS = re.compile(rb"(<(dc:creator|cp:lastModifiedBy)>)[^<]*(</\2>)")
+SCRUBBED_PART = "docProps/core.xml"
+
+
+def scrub_bytes(data):
+    """Return (new file bytes, {part: crc32 of the original part}) for an .xlsx file."""
+    src = zipfile.ZipFile(io.BytesIO(data))
+    out = io.BytesIO()
+    crcs = {}
+    with zipfile.ZipFile(out, "w") as dst:
+        for info in src.infolist():
+            body = src.read(info.filename)
+            crcs[info.filename] = info.CRC
+            if info.filename == SCRUBBED_PART:
+                body = AUTHOR_TAGS.sub(rb"\1\3", body)
+            zi = zipfile.ZipInfo(info.filename, date_time=info.date_time)
+            zi.compress_type = info.compress_type
+            zi.external_attr = info.external_attr
+            dst.writestr(zi, body)
+    return out.getvalue(), crcs
+
+
+def has_author_names(data):
+    z = zipfile.ZipFile(io.BytesIO(data))
+    if SCRUBBED_PART not in z.namelist():
+        return False
+    return bool(re.search(rb"<(dc:creator|cp:lastModifiedBy)>[^<]+<", z.read(SCRUBBED_PART)))
+
+
+def scrub_entry(entry):
+    """Scrub one manifest entry's file if it is an .xlsx with author names; update the entry."""
+    import os
+
+    path = os.path.join(ROOT, entry["path"])
+    if not path.endswith(".xlsx"):
+        return False
+    with open(path, "rb") as f:
+        data = f.read()
+    if not has_author_names(data):
+        return False
+    new, crcs = scrub_bytes(data)
+    with open(path, "wb") as f:
+        f.write(new)
+    entry.setdefault("sha256_as_downloaded", hashlib.sha256(data).hexdigest())
+    entry.setdefault("bytes_as_downloaded", len(data))
+    entry["scrubbed"] = "Author names removed from %s (dc:creator, cp:lastModifiedBy); all other parts unchanged." % SCRUBBED_PART
+    entry["parts_crc32_as_downloaded"] = crcs
+    entry["sha256"] = hashlib.sha256(new).hexdigest()
+    entry["bytes"] = len(new)
+    return True
+
+
+def main():
+    with open(MANIFEST, encoding="utf-8") as f:
+        manifest = json.load(f)
+    for e in manifest["files"]:
+        if scrub_entry(e):
+            print("scrubbed", e["path"])
+    with open(MANIFEST, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(manifest, f, indent=1)
+        f.write("\n")
+
+
+if __name__ == "__main__":
+    main()

@@ -86,3 +86,22 @@ def test_missing_years_stay_missing():
     assert "2009" not in vmt  # FHWA VM-203 footnote: data unavailable
     ch = L.changes(L.load_series())
     assert 2009 not in ch["VMT"] and 2010 not in ch["VMT"]
+
+
+def test_office_files_carry_no_personal_names_and_data_parts_are_unchanged():
+    import io
+    import re
+    import zipfile
+
+    for sid, m in MAN.items():
+        if not m["path"].endswith(".xlsx"):
+            continue
+        with open(os.path.join(ROOT, m["path"]), "rb") as f:
+            z = zipfile.ZipFile(io.BytesIO(f.read()))
+        core = z.read("docProps/core.xml")
+        assert not re.search(rb"<(dc:creator|cp:lastModifiedBy)>[^<]+<", core), sid
+        if "parts_crc32_as_downloaded" in m:
+            for info in z.infolist():
+                if info.filename != "docProps/core.xml":
+                    assert info.CRC == m["parts_crc32_as_downloaded"][info.filename], (sid, info.filename)
+            assert set(z.namelist()) == set(m["parts_crc32_as_downloaded"]), sid
