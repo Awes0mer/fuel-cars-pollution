@@ -1,0 +1,13 @@
+0:00–0:06|Hi, my name is Omer Orman and this is Fuel, Cars and Pollution. Built for the HydraDB Hackathon.
+0:06–0:13|It connects oil prices, gasoline prices, driving, electric car sales, and transportation emissions.
+0:13–0:18|You can explore those connections, replay the learning process, and trace the numbers to
+0:18–0:23|their sources. HydraDB stores the relationships and their changing strengths. Each year the
+0:23–0:28|system predicts fuel use and emissions, compares those predictions with reported data, and updates
+0:28–0:33|its relationships. The next prediction uses those updated relationships. The experiment
+0:33–0:38|compares this approach with a nearest neighbor lookup, a frozen graph, and predicting no
+0:38–0:44|change. Across 18 holdout years, the graph's reported average error was 1.77, compared
+0:44–0:52|with 2.84 for no change. But the result has an important limitation. Remove the pandemic
+0:52–0:57|years and the graph loses to all three baselines. The uncertainty intervals also leave the ranking
+0:57–1:04|unsettled. This public demo replays saved results. Its scenario controls show how learned
+1:04–1:10|relationships, not proven causes. The goal is a transparent research tool. Explore the
+1:10–1:15|evidence, inspect the learning, and see exactly where the model succeeds or fails.

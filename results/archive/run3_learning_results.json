@@ -1,0 +1,2324 @@
+{
+ "generated_utc": "2026-11-16T06:03:23+00:00",
+ "code_commit": "76841c21381cfe200d55e9c91979dab79c9c7f43",
+ "preregistration_commit": "173df905460ea6cfd7a01f937376f3de1a6a6a0f 2026-11-16T00:58:35-05:00",
+ "hydradb": {
+  "seconds": 36.37,
+  "http_requests": 2154,
+  "node_counts": {
+   "Variable": 6,
+   "Link": 5,
+   "Fit": 3,
+   "LinkState": 240,
+   "Prediction": 138
+  },
+  "parity": {
+   "max_abs_diff": 1.2521894632300246e-10,
+   "compared_values": 138,
+   "years_missing_in_one_store": 0
+  },
+  "endpoint": "http://127.0.0.1:8443 (local mode, loopback only)"
+ },
+ "hydradb_engine": "hydra-db/hydradb v0.4.0, self-hosted graph-node, local mode",
+ "config": {
+  "first_year": 1977,
+  "holdout_years_scored": [
+   2005,
+   2006,
+   2007,
+   2008,
+   2011,
+   2012,
+   2013,
+   2014,
+   2015,
+   2016,
+   2017,
+   2018,
+   2019,
+   2020,
+   2021,
+   2022,
+   2023,
+   2024
+  ],
+  "delta": 1000.0,
+  "lambda_grid": [
+   0.9,
+   0.95,
+   0.98,
+   1.0
+  ],
+  "k_grid": [
+   3,
+   5,
+   7
+  ],
+  "w_grid": [
+   10,
+   15,
+   20,
+   null
+  ],
+  "bootstrap": {
+   "n": 10000,
+   "seed": 20261116
+  }
+ },
+ "tuning": {
+  "design_years": [
+   1982,
+   1983,
+   1984,
+   1985,
+   1986,
+   1987,
+   1988,
+   1989,
+   1990,
+   1991,
+   1992,
+   1993,
+   1994,
+   1995,
+   1996,
+   1997,
+   1998,
+   1999,
+   2000,
+   2001,
+   2002,
+   2003,
+   2004
+  ],
+  "graph_lambda": 0.9,
+  "direct_lambda": 0.9,
+  "knn_k": 5,
+  "knn_window": 10,
+  "graph_grid_design_mae": [
+   {
+    "lambda": 0.9,
+    "mae": 1.3868345251022582
+   },
+   {
+    "lambda": 0.95,
+    "mae": 1.4182503789212573
+   },
+   {
+    "lambda": 0.98,
+    "mae": 1.4306106663605267
+   },
+   {
+    "lambda": 1.0,
+    "mae": 1.4351232593492083
+   }
+  ],
+  "direct_grid_design_mae": [
+   {
+    "lambda": 0.9,
+    "mae": 1.623845772747897
+   },
+   {
+    "lambda": 0.95,
+    "mae": 1.680459282474424
+   },
+   {
+    "lambda": 0.98,
+    "mae": 1.7217155445122152
+   },
+   {
+    "lambda": 1.0,
+    "mae": 1.7503068628151535
+   }
+  ],
+  "knn_grid_design_mae": [
+   {
+    "k": 3,
+    "window": 10,
+    "mae": 1.2453295439922953
+   },
+   {
+    "k": 3,
+    "window": 15,
+    "mae": 1.3743232152181812
+   },
+   {
+    "k": 3,
+    "window": 20,
+    "mae": 1.4924998636986306
+   },
+   {
+    "k": 3,
+    "window": null,
+    "mae": 1.5727352864172701
+   },
+   {
+    "k": 5,
+    "window": 10,
+    "mae": 1.0331207301675713
+   },
+   {
+    "k": 5,
+    "window": 15,
+    "mae": 1.2717010034575253
+   },
+   {
+    "k": 5,
+    "window": 20,
+    "mae": 1.4174435887393355
+   },
+   {
+    "k": 5,
+    "window": null,
+    "mae": 1.386078463638845
+   },
+   {
+    "k": 7,
+    "window": 10,
+    "mae": 1.2190687352457426
+   },
+   {
+    "k": 7,
+    "window": 15,
+    "mae": 1.3534502373810808
+   },
+   {
+    "k": 7,
+    "window": 20,
+    "mae": 1.4313722786638807
+   },
+   {
+    "k": 7,
+    "window": null,
+    "mae": 1.4267492610359138
+   }
+  ]
+ },
+ "scores_co2": {
+  "graph": {
+   "holdout_mae": 1.766606772137608,
+   "holdout_n": 18,
+   "design_mae": 1.3868345251022582,
+   "design_n": 23
+  },
+  "no_change": {
+   "holdout_mae": 2.8413497727300014,
+   "holdout_n": 18,
+   "design_mae": 2.000150043255162,
+   "design_n": 23
+  },
+  "knn": {
+   "holdout_mae": 2.9171631240764047,
+   "holdout_n": 18,
+   "design_mae": 1.0331207301675713,
+   "design_n": 23
+  },
+  "frozen_graph": {
+   "holdout_mae": 2.2867322253846014,
+   "holdout_n": 18,
+   "design_mae": 1.3868345251022582,
+   "design_n": 23
+  },
+  "direct_regression": {
+   "holdout_mae": 2.4171235433073477,
+   "holdout_n": 18,
+   "design_mae": 1.623845772747897,
+   "design_n": 23
+  }
+ },
+ "secondary_targets": {
+  "FuelUse": {
+   "graph_holdout_mae": 1.440932183607108,
+   "no_change_holdout_mae": 2.33308914289778,
+   "n": 18
+  },
+  "Gasoline": {
+   "graph_holdout_mae": 3.2983002716713106,
+   "no_change_holdout_mae": 14.609664857921075,
+   "n": 18
+  }
+ },
+ "rule": [
+  {
+   "part": 1,
+   "name": "Parity HydraDB vs in-memory",
+   "threshold": "max abs diff <= 1e-9 pp",
+   "value": 1.2521894632300246e-10,
+   "pass": true,
+   "margin": 8.747810536769976e-10
+  },
+  {
+   "part": 2,
+   "name": "Graph beats no change by 10%",
+   "threshold": "graph MAE <= 0.90 x no-change MAE",
+   "value": 1.766606772137608,
+   "limit": 2.5572147954570013,
+   "pass": true,
+   "margin": 0.7906080233193933
+  },
+  {
+   "part": 3,
+   "name": "Graph beats k-NN by 10%",
+   "threshold": "graph MAE <= 0.90 x k-NN MAE",
+   "value": 1.766606772137608,
+   "limit": 2.6254468116687644,
+   "pass": true,
+   "margin": 0.8588400395311564
+  },
+  {
+   "part": 4,
+   "name": "Refitting beats frozen weights",
+   "threshold": "graph MAE < frozen-graph MAE",
+   "value": 1.766606772137608,
+   "limit": 2.2867322253846014,
+   "pass": true,
+   "margin": 0.5201254532469934
+  }
+ ],
+ "verdict": "PASS",
+ "bootstrap_95": {
+  "graph_minus_no_change": {
+   "low": -3.138212721874828,
+   "high": 0.33105726495879345
+  },
+  "graph_minus_knn": {
+   "low": -3.191893453143497,
+   "high": 0.27781538971908315
+  },
+  "graph_minus_frozen_graph": {
+   "low": -2.255615769574248,
+   "high": 0.6818848610943666
+  },
+  "graph_minus_direct_regression": {
+   "low": -1.5833858163744747,
+   "high": 0.07774983615551914
+  }
+ },
+ "per_year": [
+  {
+   "year": 1977,
+   "period": "burn-in",
+   "actual_co2": 3.807088147404617,
+   "graph": 0.0,
+   "no_change": 0.0,
+   "knn": null,
+   "frozen_graph": 0.0,
+   "direct_regression": 0.0,
+   "graph_fuel": 0.0,
+   "actual_fuel": 2.9550891369403214,
+   "graph_gasoline": 0.0,
+   "actual_gasoline": 6.616586079694661,
+   "inputs": {
+    "Crude": 9.372281157761664,
+    "Gasoline": 6.616586079694661,
+    "VMT": 4.506711064265741,
+    "EVShare": null
+   }
+  },
+  {
+   "year": 1978,
+   "period": "burn-in",
+   "actual_co2": 3.9763860425874813,
+   "graph": 2.3969397874902083,
+   "no_change": 0.0,
+   "knn": null,
+   "frozen_graph": 2.3969397874902083,
+   "direct_regression": 1.9071310868866382,
+   "graph_fuel": 1.7353702646577625,
+   "actual_fuel": 3.382138084302537,
+   "graph_gasoline": 2.9332723784688195,
+   "actual_gasoline": 2.1116923440922615,
+   "inputs": {
+    "Crude": 4.095576483682149,
+    "Gasoline": 2.1116923440922615,
+    "VMT": 5.15944023348429,
+    "EVShare": null
+   }
+  },
+  {
+   "year": 1979,
+   "period": "burn-in",
+   "actual_co2": -0.6942172670524055,
+   "graph": 2.134921025518081,
+   "no_change": 0.0,
+   "knn": 3.8917370949960493,
+   "frozen_graph": 2.134921025518081,
+   "direct_regression": 1.3023945490350246,
+   "graph_fuel": -0.6120531231701257,
+   "actual_fuel": -5.196400868570304,
+   "graph_gasoline": 28.66418495454433,
+   "actual_gasoline": 29.84448410319736,
+   "inputs": {
+    "Crude": 35.21704318176277,
+    "Gasoline": 29.84448410319736,
+    "VMT": -1.0131398112853007,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1977,
+    1978
+   ]
+  },
+  {
+   "year": 1980,
+   "period": "burn-in",
+   "actual_co2": -3.8423419530754814,
+   "graph": 0.5867805428212556,
+   "no_change": 0.0,
+   "knn": 2.363085640979898,
+   "frozen_graph": 0.5867805428212556,
+   "direct_regression": 11.878867016447654,
+   "graph_fuel": -2.859331622425791,
+   "actual_fuel": -6.827641923871891,
+   "graph_gasoline": 39.46217105333453,
+   "actual_gasoline": 32.11682554818226,
+   "inputs": {
+    "Crude": 46.00074451968563,
+    "Gasoline": 32.11682554818226,
+    "VMT": -0.12027112836015405,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1979,
+    1977,
+    1978
+   ]
+  },
+  {
+   "year": 1981,
+   "period": "burn-in",
+   "actual_co2": -1.0002964080894714,
+   "graph": 3.158822013406035,
+   "no_change": 0.0,
+   "knn": 0.8117287424660529,
+   "frozen_graph": 3.158822013406035,
+   "direct_regression": -6.1014103515139375,
+   "graph_fuel": 1.9690460277368689,
+   "actual_fuel": 0.24484778029335838,
+   "graph_gasoline": 16.945474035684235,
+   "actual_gasoline": 10.149764267479574,
+   "inputs": {
+    "Crude": 22.74804106941877,
+    "Gasoline": 10.149764267479574,
+    "VMT": 1.817539991948805,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1977,
+    1978,
+    1979,
+    1980
+   ]
+  },
+  {
+   "year": 1982,
+   "period": "design",
+   "actual_co2": -2.2563779196758964,
+   "graph": 4.403905495850174,
+   "no_change": 0.0,
+   "knn": 0.44932371235494806,
+   "frozen_graph": 4.403905495850174,
+   "direct_regression": 6.557787468221078,
+   "graph_fuel": 5.46884627996486,
+   "actual_fuel": -0.5420623877808715,
+   "graph_gasoline": -9.913404401928046,
+   "actual_gasoline": -6.135057466138379,
+   "inputs": {
+    "Crude": -10.051667263873371,
+    "Gasoline": -6.135057466138379,
+    "VMT": 2.520640905230233,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1978,
+    1977,
+    1981,
+    1979,
+    1980
+   ]
+  },
+  {
+   "year": 1983,
+   "period": "design",
+   "actual_co2": 0.4618584683760713,
+   "graph": 1.350913493343048,
+   "no_change": 0.0,
+   "knn": 0.7665165190348651,
+   "frozen_graph": 1.350913493343048,
+   "direct_regression": 0.9473380533622378,
+   "graph_fuel": 1.7317782037073828,
+   "actual_fuel": 1.372184085094033,
+   "graph_gasoline": -7.13599524406128,
+   "actual_gasoline": -4.3365091707612695,
+   "inputs": {
+    "Crude": -9.4714185495681,
+    "Gasoline": -4.3365091707612695,
+    "VMT": 3.5583553140666755,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1982,
+    1978,
+    1977,
+    1981,
+    1979
+   ]
+  },
+  {
+   "year": 1984,
+   "period": "design",
+   "actual_co2": 2.363542815492937,
+   "graph": 1.4007746257013132,
+   "no_change": 0.0,
+   "knn": 0.9977316661205604,
+   "frozen_graph": 1.4007746257013132,
+   "direct_regression": 1.020802577396475,
+   "graph_fuel": 2.138414221899763,
+   "actual_fuel": 0.6646767442744033,
+   "graph_gasoline": -0.38870978143394463,
+   "actual_gasoline": -2.3645618575347545,
+   "inputs": {
+    "Crude": -1.2495823823540446,
+    "Gasoline": -2.3645618575347545,
+    "VMT": 4.001711499542398,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1983,
+    1978,
+    1977,
+    1982,
+    1981
+   ]
+  },
+  {
+   "year": 1985,
+   "period": "design",
+   "actual_co2": 2.2505120712705087,
+   "graph": 0.8209078080067984,
+   "no_change": 0.0,
+   "knn": 1.6704995108370422,
+   "frozen_graph": 0.8209078080067984,
+   "direct_regression": 0.897209819751716,
+   "graph_fuel": 0.5173396651212885,
+   "actual_fuel": 1.720158780908916,
+   "graph_gasoline": -4.692804922915661,
+   "actual_gasoline": -0.8285051534106916,
+   "inputs": {
+    "Crude": -6.792064576800809,
+    "Gasoline": -0.8285051534106916,
+    "VMT": 3.122171600756871,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1983,
+    1982,
+    1984,
+    1978,
+    1977
+   ]
+  },
+  {
+   "year": 1986,
+   "period": "design",
+   "actual_co2": 3.469629939987683,
+   "graph": 2.1141584866015717,
+   "no_change": 0.0,
+   "knn": 1.3591842956102202,
+   "frozen_graph": 2.1141584866015717,
+   "direct_regression": 2.1617602541783345,
+   "graph_fuel": 2.355995401924604,
+   "actual_fuel": 3.009800407105375,
+   "graph_gasoline": -39.892315135142596,
+   "actual_gasoline": -25.978854952929765,
+   "inputs": {
+    "Crude": -60.89434797245141,
+    "Gasoline": -25.978854952929765,
+    "VMT": 3.327233435187418,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1982,
+    1983,
+    1985,
+    1984,
+    1978
+   ]
+  },
+  {
+   "year": 1987,
+   "period": "design",
+   "actual_co2": 3.140755346681238,
+   "graph": 2.370069515613478,
+   "no_change": 0.0,
+   "knn": 2.571877509026323,
+   "frozen_graph": 2.370069515613478,
+   "direct_regression": -0.17579770554627272,
+   "graph_fuel": 2.396113596461821,
+   "actual_fuel": 2.4387500797120887,
+   "graph_gasoline": 13.543163049302276,
+   "actual_gasoline": 2.24009366891665,
+   "inputs": {
+    "Crude": 20.720971922920768,
+    "Gasoline": 2.24009366891665,
+    "VMT": 4.597734853326379,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1977,
+    1978,
+    1984,
+    1985,
+    1983
+   ]
+  },
+  {
+   "year": 1988,
+   "period": "design",
+   "actual_co2": 3.8492581383937554,
+   "graph": 3.233839416801122,
+   "no_change": 0.0,
+   "knn": 2.438610948881647,
+   "frozen_graph": 3.233839416801122,
+   "direct_regression": 7.066701075563381,
+   "graph_fuel": 3.4190420552466376,
+   "actual_fuel": 1.9413109277575817,
+   "graph_gasoline": -8.919136586969696,
+   "actual_gasoline": -0.21119332031435015,
+   "inputs": {
+    "Crude": -19.89961206918188,
+    "Gasoline": -0.21119332031435015,
+    "VMT": 5.309257664237158,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1978,
+    1984,
+    1983,
+    1985,
+    1987
+   ]
+  },
+  {
+   "year": 1989,
+   "period": "design",
+   "actual_co2": 0.7065130055595656,
+   "graph": 1.299660423803828,
+   "no_change": 0.0,
+   "knn": 1.4432744587462567,
+   "frozen_graph": 1.299660423803828,
+   "direct_regression": 1.2133834758108564,
+   "graph_fuel": 0.3496785598969785,
+   "actual_fuel": -0.10709611686626883,
+   "graph_gasoline": 11.453845705505483,
+   "actual_gasoline": 7.727420171177149,
+   "inputs": {
+    "Crude": 20.289910864057727,
+    "Gasoline": 7.727420171177149,
+    "VMT": 3.421843731778011,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1987,
+    1981,
+    1984,
+    1985,
+    1983
+   ]
+  },
+  {
+   "year": 1990,
+   "period": "design",
+   "actual_co2": -0.2761825893793601,
+   "graph": 0.04298096467865087,
+   "no_change": 0.0,
+   "knn": 0.5682212191491889,
+   "frozen_graph": 0.04298096467865087,
+   "direct_regression": 0.08151682505458269,
+   "graph_fuel": -1.3030704024732462,
+   "actual_fuel": -1.2729502093555103,
+   "graph_gasoline": 11.109756261804893,
+   "actual_gasoline": 13.010085752773323,
+   "inputs": {
+    "Crude": 21.228908341601635,
+    "Gasoline": 13.010085752773323,
+    "VMT": 2.2578985441134733,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1981,
+    1989,
+    1985,
+    1982,
+    1987
+   ]
+  },
+  {
+   "year": 1991,
+   "period": "design",
+   "actual_co2": -1.2419463173294276,
+   "graph": 0.2103503393458247,
+   "no_change": 0.0,
+   "knn": -0.16409727549962957,
+   "frozen_graph": 0.2103503393458247,
+   "direct_regression": -0.37635696118531115,
+   "graph_fuel": -0.9915368591262774,
+   "actual_fuel": -0.5380593382393972,
+   "graph_gasoline": -5.274601316463837,
+   "actual_gasoline": -2.0834086902842026,
+   "inputs": {
+    "Crude": -15.340088598542792,
+    "Gasoline": -2.0834086902842026,
+    "VMT": 1.2829349824839016,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1982,
+    1985,
+    1981,
+    1983,
+    1990
+   ]
+  },
+  {
+   "year": 1992,
+   "period": "design",
+   "actual_co2": 1.4863828048477283,
+   "graph": 1.5369250352526294,
+   "no_change": 0.0,
+   "knn": 0.7052096882046373,
+   "frozen_graph": 1.5369250352526294,
+   "direct_regression": 1.4273598357059738,
+   "graph_fuel": 1.0406775280236826,
+   "actual_fuel": 1.1685393113880667,
+   "graph_gasoline": 0.6563446739181711,
+   "actual_gasoline": -1.1469027348764766,
+   "inputs": {
+    "Crude": -3.3612126544324092,
+    "Gasoline": -1.1469027348764766,
+    "VMT": 3.3991769592832086,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1985,
+    1983,
+    1984,
+    1982,
+    1989
+   ]
+  },
+  {
+   "year": 1993,
+   "period": "design",
+   "actual_co2": 0.8401608770487636,
+   "graph": 0.6829206124288685,
+   "no_change": 0.0,
+   "knn": 1.0640699685315635,
+   "frozen_graph": 0.6829206124288685,
+   "direct_regression": 0.23290117846751582,
+   "graph_fuel": -0.021601039106904363,
+   "actual_fuel": 3.3420614587206154,
+   "graph_gasoline": -3.275399324726572,
+   "actual_gasoline": -1.7002646732547118,
+   "inputs": {
+    "Crude": -11.608886657973231,
+    "Gasoline": -1.7002646732547118,
+    "VMT": 2.1669907395561685,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1991,
+    1985,
+    1992,
+    1983,
+    1984
+   ]
+  },
+  {
+   "year": 1994,
+   "period": "design",
+   "actual_co2": 2.459964963579848,
+   "graph": 0.9803700100716086,
+   "no_change": 0.0,
+   "knn": 1.139730450266102,
+   "frozen_graph": 0.9803700100716086,
+   "direct_regression": 0.7568745843644773,
+   "graph_fuel": 0.7259077869178829,
+   "actual_fuel": 1.6170567701380263,
+   "graph_gasoline": -0.1584542312071915,
+   "actual_gasoline": 0.3603607503298618,
+   "inputs": {
+    "Crude": -5.1261222032314455,
+    "Gasoline": 0.3603607503298618,
+    "VMT": 2.6305963453492045,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1985,
+    1993,
+    1992,
+    1984,
+    1991
+   ]
+  },
+  {
+   "year": 1995,
+   "period": "design",
+   "actual_co2": 2.097972311140135,
+   "graph": 0.9948671471123114,
+   "no_change": 0.0,
+   "knn": 1.548706744461283,
+   "frozen_graph": 0.9948671471123114,
+   "direct_regression": 0.5790249069972622,
+   "graph_fuel": 0.5877569784449588,
+   "actual_fuel": 2.4622807849397197,
+   "graph_gasoline": 6.633883895958961,
+   "actual_gasoline": 3.0989642318842923,
+   "inputs": {
+    "Crude": 10.002236747015312,
+    "Gasoline": 3.0989642318842923,
+    "VMT": 2.729432672157901,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1994,
+    1985,
+    1989,
+    1992,
+    1993
+   ]
+  },
+  {
+   "year": 1996,
+   "period": "design",
+   "actual_co2": 2.9178583700676812,
+   "graph": 0.7390330820929536,
+   "no_change": 0.0,
+   "knn": 1.2949300991495833,
+   "frozen_graph": 0.7390330820929536,
+   "direct_regression": 0.5631185086430435,
+   "graph_fuel": 0.21153073269791123,
+   "actual_fuel": 1.2685428908041538,
+   "graph_gasoline": 9.769500779738209,
+   "actual_gasoline": 7.0677009055082936,
+   "inputs": {
+    "Crude": 18.39646248676545,
+    "Gasoline": 7.0677009055082936,
+    "VMT": 2.496898044377023,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1995,
+    1990,
+    1989,
+    1994,
+    1992
+   ]
+  },
+  {
+   "year": 1997,
+   "period": "design",
+   "actual_co2": 1.1285214537772374,
+   "graph": 1.5681143167910354,
+   "no_change": 0.0,
+   "knn": 1.1285069278574096,
+   "frozen_graph": 1.5681143167910354,
+   "direct_regression": 1.3315397758527252,
+   "graph_fuel": 1.22608452644052,
+   "actual_fuel": 1.4191858473988084,
+   "graph_gasoline": -2.057742669326018,
+   "actual_gasoline": 0.24340782808794756,
+   "inputs": {
+    "Crude": -8.40746460442736,
+    "Gasoline": 0.24340782808794756,
+    "VMT": 2.706629258351598,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1994,
+    1993,
+    1992,
+    1995,
+    1991
+   ]
+  },
+  {
+   "year": 1998,
+   "period": "design",
+   "actual_co2": 2.11967269404127,
+   "graph": 2.698734369738305,
+   "no_change": 0.0,
+   "knn": 0.9346167563848301,
+   "frozen_graph": 2.698734369738305,
+   "direct_regression": 1.7320827698005923,
+   "graph_fuel": 3.0611674980417165,
+   "actual_fuel": 3.061132867349274,
+   "graph_gasoline": -15.664836399922809,
+   "actual_gasoline": -15.293585886392671,
+   "inputs": {
+    "Crude": -41.921466369126684,
+    "Gasoline": -15.293585886392671,
+    "VMT": 2.9310753371902405,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1993,
+    1991,
+    1997,
+    1992,
+    1994
+   ]
+  },
+  {
+   "year": 1999,
+   "period": "design",
+   "actual_co2": 2.5585081633881432,
+   "graph": 0.6946105810666517,
+   "no_change": 0.0,
+   "knn": 1.5812252121935741,
+   "frozen_graph": 0.6946105810666517,
+   "direct_regression": 0.9836244446603502,
+   "graph_fuel": 0.01541561984555928,
+   "actual_fuel": 2.527083398173409,
+   "graph_gasoline": 15.61477340214108,
+   "actual_gasoline": 9.539602039839453,
+   "inputs": {
+    "Crude": 33.54447806258081,
+    "Gasoline": 9.539602039839453,
+    "VMT": 2.335136505156605,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1990,
+    1996,
+    1995,
+    1989,
+    1994
+   ]
+  },
+  {
+   "year": 2000,
+   "period": "design",
+   "actual_co2": 3.0092676356158523,
+   "graph": 0.04533976704454823,
+   "no_change": 0.0,
+   "knn": 1.9516242437592894,
+   "frozen_graph": 0.04533976704454823,
+   "direct_regression": 0.4240339222974896,
+   "graph_fuel": -1.0430906731751255,
+   "actual_fuel": 0.40472864138739617,
+   "graph_gasoline": 19.040469444175553,
+   "actual_gasoline": 25.93885638091691,
+   "inputs": {
+    "Crude": 47.86752309586208,
+    "Gasoline": 25.93885638091691,
+    "VMT": 2.085132354981173,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1990,
+    1999,
+    1996,
+    1995,
+    1994
+   ]
+  },
+  {
+   "year": 2001,
+   "period": "design",
+   "actual_co2": -1.5090170754162806,
+   "graph": 1.675268194546506,
+   "no_change": 0.0,
+   "knn": 1.0569346576433112,
+   "frozen_graph": 1.675268194546506,
+   "direct_regression": 0.41442877956262186,
+   "graph_fuel": 1.1691907904635686,
+   "actual_fuel": 0.7769456512379996,
+   "graph_gasoline": -7.043785813040917,
+   "actual_gasoline": -3.298851805827045,
+   "inputs": {
+    "Crude": -20.81294407498273,
+    "Gasoline": -3.298851805827045,
+    "VMT": 1.7568225435503328,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1993,
+    1991,
+    1994,
+    1997,
+    1995
+   ]
+  },
+  {
+   "year": 2002,
+   "period": "design",
+   "actual_co2": 2.0929394438796587,
+   "graph": 1.5749127461204262,
+   "no_change": 0.0,
+   "knn": 1.0035205060259407,
+   "frozen_graph": 1.5749127461204262,
+   "direct_regression": 1.3058669277910426,
+   "graph_fuel": 1.5350927994256536,
+   "actual_fuel": 2.6482682255127794,
+   "graph_gasoline": 4.054213333245791,
+   "actual_gasoline": -7.310810363205808,
+   "inputs": {
+    "Crude": 4.889390399005526,
+    "Gasoline": -7.310810363205808,
+    "VMT": 2.119943106569352,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1993,
+    2001,
+    1994,
+    1997,
+    1995
+   ]
+  },
+  {
+   "year": 2003,
+   "period": "design",
+   "actual_co2": 0.9362678601863772,
+   "graph": 0.4425999550964106,
+   "no_change": 0.0,
+   "knn": 1.3983718089032275,
+   "frozen_graph": 0.4425999550964106,
+   "direct_regression": -0.1985043459191742,
+   "graph_fuel": -0.2864111522782069,
+   "actual_fuel": 0.8197835963618569,
+   "graph_gasoline": 7.629540293693906,
+   "actual_gasoline": 15.834972021914528,
+   "inputs": {
+    "Crude": 16.87443247287993,
+    "Gasoline": 15.834972021914528,
+    "VMT": 1.2083209059067463,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2001,
+    2000,
+    1999,
+    1993,
+    2002
+   ]
+  },
+  {
+   "year": 2004,
+   "period": "design",
+   "actual_co2": 2.8303407297333174,
+   "graph": 0.9928089439049883,
+   "no_change": 0.0,
+   "knn": 2.608714288758332,
+   "frozen_graph": 0.9928089439049883,
+   "direct_regression": 1.88867690310719,
+   "graph_fuel": 0.6511287650226263,
+   "actual_fuel": 1.7487926384284103,
+   "graph_gasoline": 12.528340211725233,
+   "actual_gasoline": 16.690902748620807,
+   "inputs": {
+    "Crude": 25.942106073357003,
+    "Gasoline": 16.690902748620807,
+    "VMT": 2.5472559261361667,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    1999,
+    1996,
+    1995,
+    2000,
+    1994
+   ]
+  },
+  {
+   "year": 2005,
+   "period": "holdout",
+   "actual_co2": 1.0475225300267441,
+   "graph": 0.5641835094649755,
+   "no_change": 0.0,
+   "knn": 1.565073462701482,
+   "frozen_graph": 0.5641835094649755,
+   "direct_regression": 0.4094753674296605,
+   "graph_fuel": -0.19221385333573643,
+   "actual_fuel": 0.6874868507509818,
+   "graph_gasoline": 15.288844396017797,
+   "actual_gasoline": 19.94610666706506,
+   "inputs": {
+    "Crude": 30.64342962009645,
+    "Gasoline": 19.94610666706506,
+    "VMT": 0.8277204727631357,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2003,
+    2000,
+    1999,
+    2001,
+    2004
+   ]
+  },
+  {
+   "year": 2006,
+   "period": "holdout",
+   "actual_co2": 1.5402680754170193,
+   "graph": 0.9642182993433843,
+   "no_change": 0.0,
+   "knn": 1.2085098227601674,
+   "frozen_graph": 0.8032630849533464,
+   "direct_regression": 0.3497836862305358,
+   "graph_fuel": 0.453407227379768,
+   "actual_fuel": 0.9022519898699602,
+   "graph_gasoline": 10.531261792282399,
+   "actual_gasoline": 12.053885725689211,
+   "inputs": {
+    "Crude": 18.152506133169492,
+    "Gasoline": 12.053885725689211,
+    "VMT": 0.8308451087464293,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2003,
+    2005,
+    2001,
+    1999,
+    2000
+   ]
+  },
+  {
+   "year": 2007,
+   "period": "holdout",
+   "actual_co2": 0.14929529529765354,
+   "graph": 1.1130936237082405,
+   "no_change": 0.0,
+   "knn": 0.8215961668187038,
+   "frozen_graph": 0.8162526830073017,
+   "direct_regression": 0.29217904715387855,
+   "graph_fuel": 0.6322527885698811,
+   "actual_fuel": 0.7009553703919169,
+   "graph_gasoline": 7.929516187223481,
+   "actual_gasoline": 7.87047955085709,
+   "inputs": {
+    "Crude": 12.028837924079962,
+    "Gasoline": 7.87047955085709,
+    "VMT": 0.5112687055776992,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2006,
+    2003,
+    2005,
+    2001,
+    2002
+   ]
+  },
+  {
+   "year": 2008,
+   "period": "holdout",
+   "actual_co2": -6.672472859209553,
+   "graph": 0.17725890062105232,
+   "no_change": 0.0,
+   "knn": 1.3365242793087293,
+   "frozen_graph": -0.2548448894084915,
+   "direct_regression": -1.1034406791303875,
+   "graph_fuel": -0.5832120440998838,
+   "actual_fuel": -2.8839480720628927,
+   "graph_gasoline": 17.5602464281558,
+   "actual_gasoline": 15.358949827030186,
+   "inputs": {
+    "Crude": 33.25113347631679,
+    "Gasoline": 15.358949827030186,
+    "VMT": -1.8761135024983535,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2007,
+    2005,
+    2006,
+    2003,
+    2000
+   ]
+  },
+  {
+   "year": 2011,
+   "period": "holdout",
+   "actual_co2": -1.8726743984116139,
+   "graph": -5.254436845030955,
+   "no_change": 0.0,
+   "knn": -0.5998238196563518,
+   "frozen_graph": -1.1348147691241208,
+   "direct_regression": -6.8224910359213,
+   "graph_fuel": -3.4019814046522603,
+   "actual_fuel": -2.6757908225140703,
+   "graph_gasoline": 16.22639039927352,
+   "actual_gasoline": 23.512315835563754,
+   "inputs": {
+    "Crude": 28.392616882520727,
+    "Gasoline": 23.512315835563754,
+    "VMT": -3.6670693637010356,
+    "EVShare": null
+   },
+   "knn_neighbours": [
+    2008,
+    2005,
+    2006,
+    2007,
+    2003
+   ]
+  },
+  {
+   "year": 2012,
+   "period": "holdout",
+   "actual_co2": -2.066936311452986,
+   "graph": 0.08102841600792005,
+   "no_change": 0.0,
+   "knn": 1.5098222809028052,
+   "frozen_graph": 1.04046275148674,
+   "direct_regression": 0.5558237042091121,
+   "graph_fuel": 0.36795214369266466,
+   "actual_fuel": -0.7728840427181966,
+   "graph_gasoline": 0.4065406330302045,
+   "actual_gasoline": 3.263432814379694,
+   "inputs": {
+    "Crude": -0.9270283351206818,
+    "Gasoline": 3.263432814379694,
+    "VMT": 0.7521659826740367,
+    "EVShare": 0.22788992441539016
+   },
+   "knn_neighbours": [
+    2007,
+    2002,
+    2006,
+    2003,
+    2004
+   ]
+  },
+  {
+   "year": 2013,
+   "period": "holdout",
+   "actual_co2": 1.108147905090045,
+   "graph": -1.3873613030502596,
+   "no_change": 0.0,
+   "knn": 0.6778471298362763,
+   "frozen_graph": 1.203697669771083,
+   "direct_regression": -3.1683880412953362,
+   "graph_fuel": -0.8279132827349265,
+   "actual_fuel": 1.7908918588936777,
+   "graph_gasoline": 1.029428257677691,
+   "actual_gasoline": -3.291789542203346,
+   "inputs": {
+    "Crude": -0.43689871899008925,
+    "Gasoline": -3.291789542203346,
+    "VMT": 0.6549421888857252,
+    "EVShare": 0.2562931890452495
+   },
+   "knn_neighbours": [
+    2012,
+    2007,
+    2006,
+    2003,
+    2004
+   ]
+  },
+  {
+   "year": 2014,
+   "period": "holdout",
+   "actual_co2": 1.0129467718173588,
+   "graph": 0.603002084044931,
+   "no_change": 0.0,
+   "knn": -0.22100924574696376,
+   "frozen_graph": 1.4512755995924187,
+   "direct_regression": 0.42290054925598597,
+   "graph_fuel": 0.9511362205019127,
+   "actual_fuel": 1.131190676693525,
+   "graph_gasoline": -4.319607454862355,
+   "actual_gasoline": -4.614194379674105,
+   "inputs": {
+    "Crude": -8.805227533354477,
+    "Gasoline": -4.614194379674105,
+    "VMT": 1.2415608201209083,
+    "EVShare": 0.09628502172278841
+   },
+   "knn_neighbours": [
+    2007,
+    2006,
+    2004,
+    2005,
+    2008
+   ]
+  },
+  {
+   "year": 2015,
+   "period": "holdout",
+   "actual_co2": 1.2860164433205603,
+   "graph": 1.916634511056764,
+   "no_change": 0.0,
+   "knn": 0.3487443472338181,
+   "frozen_graph": 2.6402566791096964,
+   "direct_regression": 0.8920919751286582,
+   "graph_fuel": 2.085089172383317,
+   "actual_fuel": 0.6474692244144976,
+   "graph_gasoline": -36.540340137504515,
+   "actual_gasoline": -31.875077552885777,
+   "inputs": {
+    "Crude": -64.27127639220953,
+    "Gasoline": -31.875077552885777,
+    "VMT": 2.278043931361147,
+    "EVShare": -0.06647100993744581
+   },
+   "knn_neighbours": [
+    2014,
+    2013,
+    2012,
+    2007,
+    2006
+   ]
+  },
+  {
+   "year": 2016,
+   "period": "holdout",
+   "actual_co2": 1.7192728367200052,
+   "graph": 2.6789374998456217,
+   "no_change": 0.0,
+   "knn": 0.3487443472338181,
+   "frozen_graph": 2.1678901059105873,
+   "direct_regression": 1.2593547973253854,
+   "graph_fuel": 2.649639542193622,
+   "actual_fuel": 1.5495650501993545,
+   "graph_gasoline": -8.335142545855495,
+   "actual_gasoline": -13.353139262452263,
+   "inputs": {
+    "Crude": -17.40483726050267,
+    "Gasoline": -13.353139262452263,
+    "VMT": 2.521282576114765,
+    "EVShare": 0.2566477545979049
+   },
+   "knn_neighbours": [
+    2013,
+    2014,
+    2012,
+    2007,
+    2006
+   ]
+  },
+  {
+   "year": 2017,
+   "period": "holdout",
+   "actual_co2": 0.9491862395432374,
+   "graph": 0.7138205000267289,
+   "no_change": 0.0,
+   "knn": -1.2938038396914964,
+   "frozen_graph": 0.9402482097008212,
+   "direct_regression": 0.8183264989129008,
+   "graph_fuel": 0.9038188215309846,
+   "actual_fuel": 0.16333559155025265,
+   "graph_gasoline": 12.973938924524433,
+   "actual_gasoline": 11.70565554210176,
+   "inputs": {
+    "Crude": 22.028654725273782,
+    "Gasoline": 11.70565554210176,
+    "VMT": 1.188077448395855,
+    "EVShare": 0.22526757242355366
+   },
+   "knn_neighbours": [
+    2007,
+    2012,
+    2013,
+    2014,
+    2008
+   ]
+  },
+  {
+   "year": 2018,
+   "period": "holdout",
+   "actual_co2": 1.6444579187895805,
+   "graph": -1.288245449235256,
+   "no_change": 0.0,
+   "knn": -1.7109498848881741,
+   "frozen_graph": 0.7956499051377436,
+   "direct_regression": 0.5457142957520542,
+   "graph_fuel": -0.9437489060722011,
+   "actual_fuel": -0.03684635118981125,
+   "graph_gasoline": 13.821849270007542,
+   "actual_gasoline": 12.733490842736991,
+   "inputs": {
+    "Crude": 23.927167041772375,
+    "Gasoline": 12.733490842736991,
+    "VMT": 0.8672190002219748,
+    "EVShare": 0.7876701961596215
+   },
+   "knn_neighbours": [
+    2008,
+    2011,
+    2013,
+    2017,
+    2012
+   ]
+  },
+  {
+   "year": 2019,
+   "period": "holdout",
+   "actual_co2": 0.31683687505820074,
+   "graph": 1.1685988284290165,
+   "no_change": 0.0,
+   "knn": 0.544523488343532,
+   "frozen_graph": 1.2172739516816553,
+   "direct_regression": -0.0385416614471616,
+   "graph_fuel": 1.0701969106039912,
+   "actual_fuel": -0.2190768841167591,
+   "graph_gasoline": -3.9693595888912268,
+   "actual_gasoline": -3.6868819233683667,
+   "inputs": {
+    "Crude": -8.084555653504827,
+    "Gasoline": -3.6868819233683667,
+    "VMT": 0.6596393109514461,
+    "EVShare": -0.037286164283146794
+   },
+   "knn_neighbours": [
+    2014,
+    2012,
+    2013,
+    2016,
+    2017
+   ]
+  },
+  {
+   "year": 2020,
+   "period": "holdout",
+   "actual_co2": -16.415548869849133,
+   "graph": -17.549480461189468,
+   "no_change": 0.0,
+   "knn": -0.30033583157979915,
+   "frozen_graph": -2.664667582465188,
+   "direct_regression": -13.527851424430914,
+   "graph_fuel": -16.471075423182462,
+   "actual_fuel": -15.16929997215204,
+   "graph_gasoline": -21.564441608969364,
+   "actual_gasoline": -19.26938279412431,
+   "inputs": {
+    "Crude": -40.13476282352729,
+    "Gasoline": -19.26938279412431,
+    "VMT": -11.631174255333532,
+    "EVShare": 0.24010445847895157
+   },
+   "knn_neighbours": [
+    2011,
+    2013,
+    2019,
+    2012,
+    2014
+   ]
+  },
+  {
+   "year": 2021,
+   "period": "holdout",
+   "actual_co2": 10.258321749779679,
+   "graph": 6.802249842818693,
+   "no_change": 0.0,
+   "knn": -0.04756372928834744,
+   "frozen_graph": 2.536079324669047,
+   "direct_regression": 14.37169804805089,
+   "graph_fuel": 6.215152967229474,
+   "actual_fuel": 9.483170900917198,
+   "graph_gasoline": 29.532325137583154,
+   "actual_gasoline": 33.890061703551495,
+   "inputs": {
+    "Crude": 53.43947338576472,
+    "Gasoline": 33.890061703551495,
+    "VMT": 7.584439478109969,
+    "EVShare": 2.1269028171315267
+   },
+   "knn_neighbours": [
+    2011,
+    2018,
+    2017,
+    2013,
+    2012
+   ]
+  },
+  {
+   "year": 2022,
+   "period": "holdout",
+   "actual_co2": 1.9486479455238885,
+   "graph": 3.2968645134714865,
+   "no_change": 0.0,
+   "knn": 2.378635500349911,
+   "frozen_graph": 0.6995796967013724,
+   "direct_regression": 9.97376541848126,
+   "graph_fuel": 3.0006126512692823,
+   "actual_fuel": -0.5676403335884145,
+   "graph_gasoline": 20.162031426710623,
+   "actual_gasoline": 29.405308150456527,
+   "inputs": {
+    "Crude": 33.99202984021088,
+    "Gasoline": 29.405308150456527,
+    "VMT": 2.0156757487599957,
+    "EVShare": 2.5193245911014426
+   },
+   "knn_neighbours": [
+    2021,
+    2018,
+    2017,
+    2012,
+    2013
+   ]
+  },
+  {
+   "year": 2023,
+   "period": "holdout",
+   "actual_co2": 0.6786964059478863,
+   "graph": -0.37369019782485313,
+   "no_change": 0.0,
+   "knn": 1.4866946755881756,
+   "frozen_graph": 1.7685129960050183,
+   "direct_regression": 2.663639046183147,
+   "graph_fuel": -0.6267336471431633,
+   "actual_fuel": 1.934280360242093,
+   "graph_gasoline": -10.14327180378964,
+   "actual_gasoline": -11.260593727042389,
+   "inputs": {
+    "Crude": -20.445579092854096,
+    "Gasoline": -11.260593727042389,
+    "VMT": 1.5715224904886531,
+    "EVShare": 2.6347103612139033
+   },
+   "knn_neighbours": [
+    2022,
+    2016,
+    2018,
+    2013,
+    2014
+   ]
+  },
+  {
+   "year": 2024,
+   "period": "holdout",
+   "actual_co2": 0.4570464778848795,
+   "graph": 2.3471479596966076,
+   "no_change": 0.0,
+   "knn": 1.1285401283856766,
+   "frozen_graph": 1.5611107051165813,
+   "direct_regression": 4.535705686937832,
+   "graph_fuel": 2.0790146855830645,
+   "actual_fuel": 0.679520219894399,
+   "graph_gasoline": 0.9515687001643462,
+   "actual_gasoline": -5.883221601397009,
+   "inputs": {
+    "Crude": -1.334994876895083,
+    "Gasoline": -5.883221601397009,
+    "VMT": 1.4436971996480292,
+    "EVShare": 0.4442193715976934
+   },
+   "knn_neighbours": [
+    2014,
+    2019,
+    2016,
+    2017,
+    2018
+   ]
+  }
+ ],
+ "link_weights_by_year": {
+  "1977": {
+   "Gasoline": {
+    "bias": 0.07447709153453667,
+    "Crude->Gasoline": 0.6980202416740289
+   },
+   "FuelUse": {
+    "bias": 0.045399660412307696,
+    "Gasoline->FuelUse": 0.3003907611069399,
+    "VMT->FuelUse": 0.20460315189405448,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.39113443234638795,
+    "FuelUse->CO2": 1.15583711211013
+   }
+  },
+  "1978": {
+   "Gasoline": {
+    "bias": -1.38021319222089,
+    "Crude->Gasoline": 0.8531209730385253
+   },
+   "FuelUse": {
+    "bias": 0.11596184320684991,
+    "Gasoline->FuelUse": -0.002864437887273752,
+    "VMT->FuelUse": 0.6341941045338133,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 2.4190421807188227,
+    "FuelUse->CO2": 0.4642099589805835
+   }
+  },
+  "1979": {
+   "Gasoline": {
+    "bias": -1.6361220863734314,
+    "Crude->Gasoline": 0.893426694911868
+   },
+   "FuelUse": {
+    "bias": -8.0593997685299,
+    "Gasoline->FuelUse": 0.17002691634245506,
+    "VMT->FuelUse": 2.1672421978228944,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 2.1529938436967835,
+    "FuelUse->CO2": 0.5477550377828468
+   }
+  },
+  "1980": {
+   "Gasoline": {
+    "bias": -0.17213712077207122,
+    "Crude->Gasoline": 0.7524872627150428
+   },
+   "FuelUse": {
+    "bias": 7.222312349349329,
+    "Gasoline->FuelUse": -0.43464492427244805,
+    "VMT->FuelUse": -0.46311102034574114,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 1.7852356912766019,
+    "FuelUse->CO2": 0.6975897479187778
+   }
+  },
+  "1981": {
+   "Gasoline": {
+    "bias": -2.2004207587464886,
+    "Crude->Gasoline": 0.7673337607287042
+   },
+   "FuelUse": {
+    "bias": 3.089735042131916,
+    "Gasoline->FuelUse": -0.2914612954725615,
+    "VMT->FuelUse": 0.23445602256449227,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.9670958433271937,
+    "FuelUse->CO2": 0.628434129720147
+   }
+  },
+  "1982": {
+   "Gasoline": {
+    "bias": -0.40592262836594895,
+    "Crude->Gasoline": 0.7105664880581405
+   },
+   "FuelUse": {
+    "bias": -3.4069683464083047,
+    "Gasoline->FuelUse": -0.0479799318937168,
+    "VMT->FuelUse": 1.3856629538805225,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.3151557656757843,
+    "FuelUse->CO2": 0.5980891348845473
+   }
+  },
+  "1983": {
+   "Gasoline": {
+    "bias": 0.4651013010850904,
+    "Crude->Gasoline": 0.6832771448894551
+   },
+   "FuelUse": {
+    "bias": -3.5461004898219395,
+    "Gasoline->FuelUse": -0.04256085978534235,
+    "VMT->FuelUse": 1.3953721867975546,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.1698803785486966,
+    "FuelUse->CO2": 0.5756107654667076
+   }
+  },
+  "1984": {
+   "Gasoline": {
+    "bias": 0.017351902179571554,
+    "Crude->Gasoline": 0.6934793937595048
+   },
+   "FuelUse": {
+    "bias": -3.636122569786491,
+    "Gasoline->FuelUse": -0.038651270933019566,
+    "VMT->FuelUse": 1.32005539245658,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.5047084431676009,
+    "FuelUse->CO2": 0.6112026317662415
+   }
+  },
+  "1985": {
+   "Gasoline": {
+    "bias": 0.8258490866908597,
+    "Crude->Gasoline": 0.668669023933951
+   },
+   "FuelUse": {
+    "bias": -3.2139471357207317,
+    "Gasoline->FuelUse": -0.05242615121166655,
+    "VMT->FuelUse": 1.264705720697369,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6206882301324822,
+    "FuelUse->CO2": 0.6339020251266532
+   }
+  },
+  "1986": {
+   "Gasoline": {
+    "bias": 2.513793875206165,
+    "Crude->Gasoline": 0.5322804941353081
+   },
+   "FuelUse": {
+    "bias": -2.8501674360316223,
+    "Gasoline->FuelUse": -0.06849270426753844,
+    "VMT->FuelUse": 1.1744285562234067,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.7497418321616016,
+    "FuelUse->CO2": 0.676231580107264
+   }
+  },
+  "1987": {
+   "Gasoline": {
+    "bias": 0.8751743570584725,
+    "Crude->Gasoline": 0.4921860240278963
+   },
+   "FuelUse": {
+    "bias": -2.8628403868832284,
+    "Gasoline->FuelUse": -0.06805344534656657,
+    "VMT->FuelUse": 1.1804870671969578,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.8423687067993652,
+    "FuelUse->CO2": 0.6994563598104805
+   }
+  },
+  "1988": {
+   "Gasoline": {
+    "bias": 2.0183352032573447,
+    "Crude->Gasoline": 0.46503459603474834
+   },
+   "FuelUse": {
+    "bias": -2.4139553101302633,
+    "Gasoline->FuelUse": -0.0801402121042592,
+    "VMT->FuelUse": 0.9886222828201241,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 1.0429899389339792,
+    "FuelUse->CO2": 0.7340183651679087
+   }
+  },
+  "1989": {
+   "Gasoline": {
+    "bias": 1.5251774224546553,
+    "Crude->Gasoline": 0.45148712713444783
+   },
+   "FuelUse": {
+    "bias": -2.417836703723437,
+    "Gasoline->FuelUse": -0.0832115378968556,
+    "VMT->FuelUse": 0.9731861294818209,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 1.0052376496742077,
+    "FuelUse->CO2": 0.7384533354216164
+   }
+  },
+  "1990": {
+   "Gasoline": {
+    "bias": 1.750975509197398,
+    "Crude->Gasoline": 0.4579880214204642
+   },
+   "FuelUse": {
+    "bias": -2.4121315015620897,
+    "Gasoline->FuelUse": -0.08303648499273972,
+    "VMT->FuelUse": 0.9724543527340751,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.955146335077096,
+    "FuelUse->CO2": 0.7511531103216583
+   }
+  },
+  "1991": {
+   "Gasoline": {
+    "bias": 2.161384542944287,
+    "Crude->Gasoline": 0.4477669293079179
+   },
+   "FuelUse": {
+    "bias": -2.1682361224047106,
+    "Gasoline->FuelUse": -0.08826903329261265,
+    "VMT->FuelUse": 0.9142441514417405,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.7172044123479211,
+    "FuelUse->CO2": 0.7876797574954976
+   }
+  },
+  "1992": {
+   "Gasoline": {
+    "bias": 1.939580983824305,
+    "Crude->Gasoline": 0.4492231220957883
+   },
+   "FuelUse": {
+    "bias": -2.156736040274501,
+    "Gasoline->FuelUse": -0.08855070573390564,
+    "VMT->FuelUse": 0.9158208792451664,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6998740753687623,
+    "FuelUse->CO2": 0.7848447871415111
+   }
+  },
+  "1993": {
+   "Gasoline": {
+    "bias": 2.1242793138675924,
+    "Crude->Gasoline": 0.4453139146069862
+   },
+   "FuelUse": {
+    "bias": -1.0207222769144602,
+    "Gasoline->FuelUse": -0.11322464821148358,
+    "VMT->FuelUse": 0.6794777869199812,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.5187856230408678,
+    "FuelUse->CO2": 0.6358719321507386
+   }
+  },
+  "1994": {
+   "Gasoline": {
+    "bias": 2.18456086314885,
+    "Crude->Gasoline": 0.444832805436024
+   },
+   "FuelUse": {
+    "bias": -0.8439189484730909,
+    "Gasoline->FuelUse": -0.11566757071907921,
+    "VMT->FuelUse": 0.6558599556698873,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6110147295386261,
+    "FuelUse->CO2": 0.6530801532790846
+   }
+  },
+  "1995": {
+   "Gasoline": {
+    "bias": 1.7733937396943271,
+    "Crude->Gasoline": 0.43465459980669324
+   },
+   "FuelUse": {
+    "bias": -0.6005497270798179,
+    "Gasoline->FuelUse": -0.11297793359855583,
+    "VMT->FuelUse": 0.6450302234012671,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6018466117571543,
+    "FuelUse->CO2": 0.648541555102144
+   }
+  },
+  "1996": {
+   "Gasoline": {
+    "bias": 1.4897127990516679,
+    "Crude->Gasoline": 0.42194117195683467
+   },
+   "FuelUse": {
+    "bias": -0.47614950049301613,
+    "Gasoline->FuelUse": -0.10666790159756144,
+    "VMT->FuelUse": 0.6385055595832181,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.7631213461056712,
+    "FuelUse->CO2": 0.6565558518402982
+   }
+  },
+  "1997": {
+   "Gasoline": {
+    "bias": 1.7527736302868635,
+    "Crude->Gasoline": 0.4154818888453047
+   },
+   "FuelUse": {
+    "bias": -0.44006009275806357,
+    "Gasoline->FuelUse": -0.10743515235880588,
+    "VMT->FuelUse": 0.63395124560802,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.705699895765343,
+    "FuelUse->CO2": 0.6510700493350794
+   }
+  },
+  "1998": {
+   "Gasoline": {
+    "bias": 1.7815450302614682,
+    "Crude->Gasoline": 0.4123846656988446
+   },
+   "FuelUse": {
+    "bias": -0.4400701430452731,
+    "Gasoline->FuelUse": -0.10743445880490664,
+    "VMT->FuelUse": 0.633953407856937,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6850755091788846,
+    "FuelUse->CO2": 0.6185331490587989
+   }
+  },
+  "1999": {
+   "Gasoline": {
+    "bias": 1.1192809029571258,
+    "Crude->Gasoline": 0.3743913906998799
+   },
+   "FuelUse": {
+    "bias": -0.11366701637161919,
+    "Gasoline->FuelUse": -0.08455098423309032,
+    "VMT->FuelUse": 0.6060680882270439,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.7023958393922813,
+    "FuelUse->CO2": 0.6299127096474568
+   }
+  },
+  "2000": {
+   "Gasoline": {
+    "bias": 1.6413785153123248,
+    "Crude->Gasoline": 0.4172962891296506
+   },
+   "FuelUse": {
+    "bias": -0.1589148322443168,
+    "Gasoline->FuelUse": -0.05917292897042114,
+    "VMT->FuelUse": 0.6448590401329163,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 1.0233376027000554,
+    "FuelUse->CO2": 0.5575912820763571
+   }
+  },
+  "2001": {
+   "Gasoline": {
+    "bias": 2.076933913836228,
+    "Crude->Gasoline": 0.40440203339290115
+   },
+   "FuelUse": {
+    "bias": -0.3516657369611681,
+    "Gasoline->FuelUse": -0.055543662266013524,
+    "VMT->FuelUse": 0.6984571190111828,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.623393745909107,
+    "FuelUse->CO2": 0.619844611718148
+   }
+  },
+  "2002": {
+   "Gasoline": {
+    "bias": 0.8729100289453224,
+    "Crude->Gasoline": 0.4004063707391423
+   },
+   "FuelUse": {
+    "bias": 0.04103589540725611,
+    "Gasoline->FuelUse": -0.06642128763041712,
+    "VMT->FuelUse": 0.5994534895994184,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6176178235659976,
+    "FuelUse->CO2": 0.6110721146067053
+   }
+  },
+  "2003": {
+   "Gasoline": {
+    "bias": 1.6664400594966389,
+    "Crude->Gasoline": 0.4186977002373742
+   },
+   "FuelUse": {
+    "bias": 0.41461338412052356,
+    "Gasoline->FuelUse": -0.05956741722610316,
+    "VMT->FuelUse": 0.4831667427608604,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.5919039440201951,
+    "FuelUse->CO2": 0.6157077085526426
+   }
+  },
+  "2004": {
+   "Gasoline": {
+    "bias": 2.0100307738470784,
+    "Crude->Gasoline": 0.43333314145301344
+   },
+   "FuelUse": {
+    "bias": 0.2929116295772315,
+    "Gasoline->FuelUse": -0.04743748508950457,
+    "VMT->FuelUse": 0.557033044211702,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6863612005659577,
+    "FuelUse->CO2": 0.6356341594566374
+   }
+  },
+  "2005": {
+   "Gasoline": {
+    "bias": 2.3327648929569915,
+    "Crude->Gasoline": 0.45164545540874695
+   },
+   "FuelUse": {
+    "bias": 0.5988535880655192,
+    "Gasoline->FuelUse": -0.043067716379487225,
+    "VMT->FuelUse": 0.4497673117228751,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.6747906132027925,
+    "FuelUse->CO2": 0.6383393749878868
+   }
+  },
+  "2006": {
+   "Gasoline": {
+    "bias": 2.467012824155844,
+    "Crude->Gasoline": 0.4541172969113258
+   },
+   "FuelUse": {
+    "bias": 0.7793992972537716,
+    "Gasoline->FuelUse": -0.04398635159430449,
+    "VMT->FuelUse": 0.3893200774551285,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.7138024896359638,
+    "FuelUse->CO2": 0.631537165657189
+   }
+  },
+  "2007": {
+   "Gasoline": {
+    "bias": 2.461116294897345,
+    "Crude->Gasoline": 0.4540936971069829
+   },
+   "FuelUse": {
+    "bias": 0.8098434076243453,
+    "Gasoline->FuelUse": -0.044418463368545935,
+    "VMT->FuelUse": 0.3788867254067309,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": 0.5660177829816878,
+    "FuelUse->CO2": 0.6665823970776137
+   }
+  },
+  "2008": {
+   "Gasoline": {
+    "bias": 2.3593822198481336,
+    "Crude->Gasoline": 0.4440827868245749
+   },
+   "FuelUse": {
+    "bias": -0.0717938863305907,
+    "Gasoline->FuelUse": -0.0347045313476384,
+    "VMT->FuelUse": 0.7455025548771126,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": -0.5306233034624191,
+    "FuelUse->CO2": 1.3466069732279538
+   }
+  },
+  "2009": {
+   "Gasoline": {
+    "bias": 0.1795128987072454,
+    "Crude->Gasoline": 0.5503589325322705
+   },
+   "FuelUse": {
+    "bias": -0.3235895988581981,
+    "Gasoline->FuelUse": -0.01961724688848379,
+    "VMT->FuelUse": 0.7455025548771126,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": -0.8942937915998145,
+    "FuelUse->CO2": 1.4210467417937993
+   }
+  },
+  "2010": {
+   "Gasoline": {
+    "bias": 0.4037851908424712,
+    "Crude->Gasoline": 0.5572788613990659
+   },
+   "FuelUse": {
+    "bias": -0.25657632729824215,
+    "Gasoline->FuelUse": -0.01750552777029076,
+    "VMT->FuelUse": 0.7455025548771126,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": -0.6468436877633191,
+    "FuelUse->CO2": 1.3543851682924202
+   }
+  },
+  "2011": {
+   "Gasoline": {
+    "bias": 0.9416487902065306,
+    "Crude->Gasoline": 0.577229559123093
+   },
+   "FuelUse": {
+    "bias": -0.06967957429613886,
+    "Gasoline->FuelUse": -0.019815660207218568,
+    "VMT->FuelUse": 0.6678031249989643,
+    "EVShare->FuelUse": 0.0
+   },
+   "CO2": {
+    "bias": -0.3351720277200888,
+    "FuelUse->CO2": 1.1311265632294945
+   }
+  },
+  "2012": {
+   "Gasoline": {
+    "bias": 1.2794852140098403,
+    "Crude->Gasoline": 0.5723453639556713
+   },
+   "FuelUse": {
+    "bias": -0.0697545030452215,
+    "Gasoline->FuelUse": -0.019877424551275842,
+    "VMT->FuelUse": 0.6683672428983195,
+    "EVShare->FuelUse": -4.921445582286545
+   },
+   "CO2": {
+    "bias": -0.4280145719270533,
+    "FuelUse->CO2": 1.158752675103971
+   }
+  },
+  "2013": {
+   "Gasoline": {
+    "bias": 0.780857418827746,
+    "Crude->Gasoline": 0.5792541821740984
+   },
+   "FuelUse": {
+    "bias": -0.05177685825489404,
+    "Gasoline->FuelUse": -0.024654316398844595,
+    "VMT->FuelUse": 0.6376247769767069,
+    "EVShare->FuelUse": 1.0126531397859413
+   },
+   "CO2": {
+    "bias": -0.4737056050840654,
+    "FuelUse->CO2": 1.1320225914231505
+   }
+  },
+  "2014": {
+   "Gasoline": {
+    "bias": 0.7451080858284311,
+    "Crude->Gasoline": 0.5801261514677559
+   },
+   "FuelUse": {
+    "bias": -0.057094298321179154,
+    "Gasoline->FuelUse": -0.024511694332546,
+    "VMT->FuelUse": 0.6327446429336867,
+    "EVShare->FuelUse": 1.2117881330553302
+   },
+   "CO2": {
+    "bias": -0.45503372766772077,
+    "FuelUse->CO2": 1.137442115251886
+   }
+  },
+  "2015": {
+   "Gasoline": {
+    "bias": 1.199465013603254,
+    "Crude->Gasoline": 0.5478136575913827
+   },
+   "FuelUse": {
+    "bias": 0.07605016791985883,
+    "Gasoline->FuelUse": -0.006617509803236853,
+    "VMT->FuelUse": 0.9055471871212954,
+    "EVShare->FuelUse": 0.7874002243988046
+   },
+   "CO2": {
+    "bias": -0.3565934158677343,
+    "FuelUse->CO2": 1.145639196341498
+   }
+  },
+  "2016": {
+   "Gasoline": {
+    "bias": 0.7107507429431097,
+    "Crude->Gasoline": 0.5566925595102998
+   },
+   "FuelUse": {
+    "bias": 0.19941838727038336,
+    "Gasoline->FuelUse": -0.0043763849339849645,
+    "VMT->FuelUse": 0.9193311215264098,
+    "EVShare->FuelUse": -1.4942571656235795
+   },
+   "CO2": {
+    "bias": -0.3334113134187383,
+    "FuelUse->CO2": 1.1586744914999163
+   }
+  },
+  "2017": {
+   "Gasoline": {
+    "bias": 0.5827074624327444,
+    "Crude->Gasoline": 0.5533100422821358
+   },
+   "FuelUse": {
+    "bias": 0.22246154020031708,
+    "Gasoline->FuelUse": -0.008883099932271012,
+    "VMT->FuelUse": 0.901443067999479,
+    "EVShare->FuelUse": -2.3294598929391683
+   },
+   "CO2": {
+    "bias": -0.21268315387564524,
+    "FuelUse->CO2": 1.1396699783589739
+   }
+  },
+  "2018": {
+   "Gasoline": {
+    "bias": 0.48007809486007197,
+    "Crude->Gasoline": 0.5503626760021588
+   },
+   "FuelUse": {
+    "bias": 0.31926664091021584,
+    "Gasoline->FuelUse": -0.008407028705077507,
+    "VMT->FuelUse": 0.9898176481059471,
+    "EVShare->FuelUse": -1.7972327659857343
+   },
+   "CO2": {
+    "bias": 0.0030822442640668635,
+    "FuelUse->CO2": 1.0890674161142575
+   }
+  },
+  "2019": {
+   "Gasoline": {
+    "bias": 0.5091875513839159,
+    "Crude->Gasoline": 0.5499877813508234
+   },
+   "FuelUse": {
+    "bias": 0.47313154696193493,
+    "Gasoline->FuelUse": -0.0013645142505489686,
+    "VMT->FuelUse": 1.3988627501098465,
+    "EVShare->FuelUse": -2.915747238425072
+   },
+   "CO2": {
+    "bias": 0.0666632685627173,
+    "FuelUse->CO2": 1.0695199479785078
+   }
+  },
+  "2020": {
+   "Gasoline": {
+    "bias": 0.7118539566688397,
+    "Crude->Gasoline": 0.5393105387260712
+   },
+   "FuelUse": {
+    "bias": -0.27309622114581433,
+    "Gasoline->FuelUse": 0.012413521561212601,
+    "VMT->FuelUse": 1.2104997817081584,
+    "EVShare->FuelUse": -1.4638224797324624
+   },
+   "CO2": {
+    "bias": 0.058779523925210686,
+    "FuelUse->CO2": 1.0850047222408938
+   }
+  },
+  "2021": {
+   "Gasoline": {
+    "bias": 1.0872031154142912,
+    "Crude->Gasoline": 0.5611559062804704
+   },
+   "FuelUse": {
+    "bias": -1.0501676324901346,
+    "Gasoline->FuelUse": 0.028834155380141738,
+    "VMT->FuelUse": 1.138455986516917,
+    "EVShare->FuelUse": 0.36047158818006064
+   },
+   "CO2": {
+    "bias": 0.04944992002753678,
+    "FuelUse->CO2": 1.0822505170969896
+   }
+  },
+  "2022": {
+   "Gasoline": {
+    "bias": 1.861104477580502,
+    "Crude->Gasoline": 0.5871379933457485
+   },
+   "FuelUse": {
+    "bias": 0.05623134485601433,
+    "Gasoline->FuelUse": 0.005226361326333424,
+    "VMT->FuelUse": 1.3270258256057212,
+    "EVShare->FuelUse": -1.0284105724558215
+   },
+   "CO2": {
+    "bias": 0.30223881536840547,
+    "FuelUse->CO2": 1.0784948538734793
+   }
+  },
+  "2023": {
+   "Gasoline": {
+    "bias": 1.7391109105465492,
+    "Crude->Gasoline": 0.5899215225558471
+   },
+   "FuelUse": {
+    "bias": 0.211019573250636,
+    "Gasoline->FuelUse": -0.024710003905625156,
+    "VMT->FuelUse": 1.3704634969498941,
+    "EVShare->FuelUse": -0.576097409398718
+   },
+   "CO2": {
+    "bias": 0.13083125641193877,
+    "FuelUse->CO2": 1.0660418700520615
+   }
+  },
+  "2024": {
+   "Gasoline": {
+    "bias": 1.0413981116357314,
+    "Crude->Gasoline": 0.5932926906278375
+   },
+   "FuelUse": {
+    "bias": -0.3905644926533962,
+    "Gasoline->FuelUse": -0.010249267424791061,
+    "VMT->FuelUse": 1.2876760820183286,
+    "EVShare->FuelUse": -0.3063998156598132
+   },
+   "CO2": {
+    "bias": 0.09087679833381246,
+    "FuelUse->CO2": 1.065087612494752
+   }
+  },
+  "2025": {
+   "Gasoline": {
+    "bias": 1.0413981116357314,
+    "Crude->Gasoline": 0.5932926906278375
+   },
+   "FuelUse": {
+    "bias": -0.3905644926533962,
+    "Gasoline->FuelUse": -0.010249267424791061,
+    "VMT->FuelUse": 1.2876760820183286,
+    "EVShare->FuelUse": -0.3063998156598132
+   },
+   "CO2": {
+    "bias": 0.09087679833381246,
+    "FuelUse->CO2": 1.065087612494752
+   }
+  }
+ },
+ "final_weights": {
+  "Gasoline": {
+   "bias": 1.0413981116357314,
+   "Crude->Gasoline": 0.5932926906278375
+  },
+  "FuelUse": {
+   "bias": -0.3905644926533962,
+   "Gasoline->FuelUse": -0.010249267424791061,
+   "VMT->FuelUse": 1.2876760820183286,
+   "EVShare->FuelUse": -0.3063998156598132
+  },
+  "CO2": {
+   "bias": 0.09087679833381246,
+   "FuelUse->CO2": 1.065087612494752
+  }
+ },
+ "seconds_total": 37.61
+}
