@@ -85,3 +85,16 @@ def test_flowchart_data_matches_results():
         js = f.read()
     js = js.replace("http://www.w3.org/2000/svg", "")  # SVG namespace name, not a request
     assert "http://" not in js and "https://" not in js, "flow.js must not load anything from another host"
+
+
+def test_pages_load_nothing_from_other_hosts():
+    import glob
+    import re
+
+    for path in glob.glob(os.path.join(ROOT, "site", "*.html")) + [os.path.join(ROOT, "site", "style.css")]:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+        assert not re.search(r"""\bsrc=["']?(https?:)?//""", text), path
+        assert not re.search(r"""<link[^>]+rel=["']?(stylesheet|preload|modulepreload|icon)[^>]+href=["']?(https?:)?//""", text), path
+        assert not re.search(r"""url\(\s*["']?(https?:)?//""", text), path
+        assert "@import" not in text, path

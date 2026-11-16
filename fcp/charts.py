@@ -57,13 +57,11 @@ def fmt(v, digits=2):
     return ("%." + str(digits) + "f") % v
 
 
-def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, x_range=None, unit_note="", digits=2, shade=None, width=560, height=340):
+def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, unit_note="", digits=2, shade=None, width=560, height=340):
     """lines: list of dicts {label, values: {year: v}, flags: {year: flag}}."""
     W, H = width, height
     L, R, T, B = 64, 16, 16, 44
     all_years = sorted({int(y) for ln in lines for y in ln["values"]})
-    if x_range:
-        all_years = [y for y in all_years if x_range[0] <= y <= x_range[1]]
     vals = [v for ln in lines for y, v in ln["values"].items() if int(y) in all_years and v is not None]
     if not all_years or not vals:
         return '<p class="note">No data for %s.</p>' % esc(title)

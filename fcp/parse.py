@@ -41,7 +41,6 @@ def _num(s):
 def mer_annual(source_id, filename, msn):
     """Annual values (YYYY13 rows) for one MSN code of an EIA MER CSV."""
     vals = {}
-    meta = None
     table_last = 0
     with open(raw_path(source_id, filename), encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
@@ -50,13 +49,12 @@ def mer_annual(source_id, filename, msn):
             if row["MSN"] != msn or not row["YYYYMM"].endswith("13"):
                 continue
             v = _num(row["Value"])
-            meta = (row["Description"], row["Unit"])
             if v is not None:
                 vals[int(row["YYYYMM"][:4])] = v
     flags = {}
     if vals and max(vals) == table_last:
         flags[max(vals)] = "provisional"
-    return vals, flags, meta
+    return vals, flags
 
 
 def brent_annual():
@@ -98,6 +96,27 @@ VM1_TYPES = (
     "Single Unit Trucks",
     "Combination Trucks",
 )
+
+
+def vm1_total_vmt():
+    """FHWA VM-1 total vehicle-miles (millions), six vehicle types summed.
+
+    Used only to cross-check VM-203 (the pre-registered series); never joined to it.
+    """
+    best = {}
+    with open(raw_path("fhwa_vm1_2000_2024", "vm1_2000_2024.csv"), encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f):
+            if row["Item"] != "Total_VMT" or row["Vehicle_Type"] not in VM1_TYPES:
+                continue
+            v = _num(row["Data"])
+            if v is None:
+                continue
+            key = (int(row["Year"]), row["Vehicle_Type"])
+            ry = int(row["Report_Year"])
+            if key not in best or ry > best[key][0]:
+                best[key] = (ry, v)
+    years = sorted({k[0] for k in best})
+    return {y: sum(best[(y, t)][1] for t in VM1_TYPES) / 1e6 for y in years if all((y, t) in best for t in VM1_TYPES)}
 
 
 def vm1_registered_vehicles():
@@ -206,16 +225,16 @@ def build():
             "flags": {str(y): flags[y] for y in sorted(flags) if y in vals},
         })
 
-    v, f, _ = mer_annual("eia_mer_t0901", "T09.01.csv", "RACPUUS")
+    v, f = mer_annual("eia_mer_t0901", "T09.01.csv", "RACPUUS")
     add("us_crude_rac", "U.S. crude oil price (refiner acquisition cost, composite)", "US", "dollars per barrel", ["eia_mer_t0901"], v, f)
-    v, f, _ = mer_annual("eia_mer_t0904", "T09.04.csv", "RUUCUUS")
+    v, f = mer_annual("eia_mer_t0904", "T09.04.csv", "RUUCUUS")
     add("us_gasoline_unleaded", "U.S. retail unleaded regular gasoline (city average, incl. taxes)", "US", "dollars per gallon", ["eia_mer_t0904"], v, f)
-    v, f, _ = mer_annual("eia_mer_t0904", "T09.04.csv", "RLUCUUS")
+    v, f = mer_annual("eia_mer_t0904", "T09.04.csv", "RLUCUUS")
     add("us_gasoline_leaded", "U.S. retail leaded regular gasoline (city average, incl. taxes)", "US", "dollars per gallon", ["eia_mer_t0904"], v, f,
         note="Separate EIA series; not joined to the unleaded line.")
-    v, f, _ = mer_annual("eia_mer_t0307c", "T03.07C.csv", "MGACPUS")
+    v, f = mer_annual("eia_mer_t0307c", "T03.07C.csv", "MGACPUS")
     add("us_motor_gasoline_use", "U.S. motor gasoline consumed by transportation", "US", "thousand barrels per day", ["eia_mer_t0307c"], v, f)
-    v, f, _ = mer_annual("eia_mer_t1105", "T11.05.csv", "TEACEUS")
+    v, f = mer_annual("eia_mer_t1105", "T11.05.csv", "TEACEUS")
     add("us_transport_co2", "U.S. transportation-sector CO2 emissions (total energy)", "US", "million metric tons CO2", ["eia_mer_t1105"], v, f)
     vmt, f = vm203_total_vmt()
     add("us_vmt", "U.S. vehicle-miles traveled, all roads", "US", "million vehicle-miles", ["fhwa_vm203"], vmt, f)

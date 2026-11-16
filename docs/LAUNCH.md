@@ -21,9 +21,9 @@
 1. **0:00 Problem.** Fuel prices, miles driven, EVs and CO2 all move together, but which links matter, and do they change? Static models go stale.
 2. **0:30 The graph.** Show the diagram. Each arrow is a node in HydraDB holding its weight; every year the weights are refit and a history node is written.
 3. **1:00 The rule.** Show PREREGISTRATION.md and its commit time: written before any run, four parts, 10% margins.
-4. **1:30 The result.** Verdict PASS. Holdout MAE: graph 1.77 pp, no change 2.84, k-NN 2.92, frozen 2.29 (n=18).
-5. **2:00 The honest part.** Without 2020–21 the graph scores 1.70 vs no change 1.53, k-NN 1.63, frozen 1.23. Intervals include zero. Say it plainly.
-6. **2:30 HydraDB under the hood.** 2154 queries per full run; links as nodes because edges dedupe on (source, target, type); parity vs in-memory within 1.25e-10 pp, with the one-ULP float finding.
+4. **1:30 The result.** Verdict PASS. Holdout MAE: graph 1.77 pp, no change 2.84, k-NN 2.95, frozen 2.29 (n=18).
+5. **2:00 The honest part.** Without 2020–21 the graph scores 1.70 vs no change 1.53, k-NN 1.67, frozen 1.23. Intervals include zero. Say it plainly.
+6. **2:30 HydraDB under the hood.** 2167 queries per full run; links as nodes because edges dedupe on (source, target, type); parity vs in-memory within 1.25e-10 pp, with the one-ULP float finding.
 7. **2:50 Close.** Sources page: every number traced to a file with its SHA-256.
 
 ## Social post draft
@@ -35,7 +35,7 @@ I built a graph that refits its own links every year: crude oil -> gasoline -> f
 
 Link strengths live in a self-hosted HydraDB graph. Rule written before the first run.
 
-Holdout 2005-2024: graph MAE 1.77 pp vs 2.84 for 'no change' and 2.92 for a vector-store k-NN. Verdict: PASS.
+Holdout 2005-2024: graph MAE 1.77 pp vs 2.84 for 'no change' and 2.95 for a vector-store k-NN. Verdict: PASS.
 The catch: without 2020-21 it scores 1.70 and loses to both. I'm publishing that too.
 
 Official data only (EIA, FHWA, EPA, World Bank, Ember). Every number traced to a file hash.
@@ -48,4 +48,4 @@ Official data only (EIA, FHWA, EPA, World Bank, Ember). Every number traced to a
 - **One line:** A HydraDB graph links crude oil, gasoline, driving, EVs, fuel use and transport CO2, and refits every link each year; tested against a vector-store baseline under a rule written before the first run.
 - **How HydraDB is used:** link weights, fit state, per-year link history and predictions are HydraDB nodes; each prediction is a graph walk (`<-[:INTO]-`) plus anchored id reads; refits are written back before the next year.
 - **Metric:** MAE of the yearly change in U.S. transport CO2, holdout 2005–2024 (n=18), walk-forward.
-- **Result:** PASS; graph 1.77 vs no change 2.84, k-NN 2.92, frozen 2.29. Fragile: depends on 2020–21.
+- **Result:** PASS; graph 1.77 vs no change 2.84, k-NN 2.95, frozen 2.29. Fragile: depends on 2020–21.

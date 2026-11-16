@@ -1,9 +1,11 @@
 """Every declared third-party package has the licence its own metadata states."""
 
 import importlib.metadata as md
+import os
 
 import pytest
 
+from fcp.fetch import ROOT
 from fcp.sources import SOFTWARE
 
 
@@ -24,8 +26,8 @@ def test_licence_matches_package_metadata(item):
 
 
 def test_requirements_cover_every_package():
-    with open("requirements.txt", encoding="utf-8") as f:
+    with open(os.path.join(ROOT, "requirements.txt"), encoding="utf-8") as f:
         req = {line.split("==")[0].strip().lower() for line in f if line.strip()}
     for s in SOFTWARE:
-        if s["package"] and s["package"] != "et-xmlfile":  # installed by openpyxl
+        if s["package"] and not s["role"].startswith("Installed with"):
             assert s["package"].lower() in req, s["package"]

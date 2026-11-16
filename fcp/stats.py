@@ -82,6 +82,23 @@ def correlations(series):
     return out
 
 
+def vmt_check():
+    """Compare the pre-registered VM-203 miles series with FHWA's own VM-1 table."""
+    from fcp.parse import vm1_total_vmt, vm203_total_vmt
+
+    a, _ = vm203_total_vmt()
+    b = vm1_total_vmt()
+    gaps = {y: 100.0 * (a[y] / b[y] - 1.0) for y in b if y in a}
+    worst = max(gaps, key=lambda y: abs(gaps[y]))
+    others = [abs(g) for y, g in gaps.items() if y != worst]
+    out = {"years_compared": len(gaps), "worst_year": worst, "worst_gap_pct": gaps[worst], "max_other_gap_pct": max(others)}
+    if worst + 1 in a and worst + 1 in b:
+        out["next_year"] = worst + 1
+        out["next_change_vm203"] = 100.0 * math.log(a[worst + 1] / a[worst])
+        out["next_change_vm1"] = 100.0 * math.log(b[worst + 1] / b[worst])
+    return out
+
+
 def summary(results):
     """Derived, reported-only numbers. Computed from results/learning_results.json."""
     rows = [r for r in results["per_year"] if r["period"] == "holdout" and r["actual_co2"] is not None]
@@ -91,13 +108,12 @@ def summary(results):
         return sum(abs(r[m] - r["actual_co2"]) for r in rs) / len(rs)
 
     ex = [r for r in rows if r["year"] not in (2020, 2021)]
-    first = [r for r in rows if r["year"] <= 2014]
-    second = [r for r in rows if r["year"] > 2014]
+    no2011 = [r for r in rows if r["year"] != 2011]
     return {
         "holdout_n": len(rows),
         "excluding_2020_2021": {"n": len(ex), **{m: mae_of(ex, m) for m in models}},
-        "holdout_first_half_to_2014": {"n": len(first), **{m: mae_of(first, m) for m in models}},
-        "holdout_second_half_from_2015": {"n": len(second), **{m: mae_of(second, m) for m in models}},
+        "excluding_2011": {"n": len(no2011), **{m: mae_of(no2011, m) for m in models}},
+        "vmt_check": vmt_check(),
         "graph_wins_by_year": {m: sum(1 for r in rows if abs(r["graph"] - r["actual_co2"]) < abs(r[m] - r["actual_co2"])) for m in models if m != "graph"},
         "ev_link_weight_range_2012_on": {
             "min": min(w["FuelUse"]["EVShare->FuelUse"] for y, w in results["link_weights_by_year"].items() if int(y) >= 2012),

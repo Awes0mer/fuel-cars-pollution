@@ -38,16 +38,18 @@ NAV = [
 ]
 
 CSS = """
-:root{--ink:#1b2124;--muted:#4d575c;--line:#d9ddd9;--paper:#fcfcfa;--concrete:#eff1ee;--card:#ffffff;
+:root{--ink:#1b2124;--muted:#4d575c;--line:#d9ddd9;--paper:#fcfcfa;--concrete:#eff1ee;
 --sign:#0b6b4f;--lane:#f2b400;--blue:#0b5cad;--rust:#b34d00;--alarm:#a4161a;--asphalt:#1f2629;
 --display:"Bahnschrift","DIN Alternate","DIN Condensed","Barlow Semi Condensed","Roboto Condensed","Arial Narrow",system-ui,sans-serif;
 --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
---fg:var(--ink);--soft:var(--concrete);--accent:var(--blue);--bad:var(--alarm);--good:var(--sign);--bg:var(--paper);color-scheme:light}
+--fg:var(--ink);--bad:var(--alarm);--good:var(--sign);color-scheme:light}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:72px}
 body{margin:0;background:var(--paper);color:var(--ink);font:16.5px/1.6 var(--body)}
 a{color:var(--blue);text-underline-offset:2px}
 :focus-visible{outline:3px solid var(--lane);outline-offset:2px}
+.skip{position:absolute;left:8px;top:-60px;z-index:50;background:var(--ink);color:#fff;padding:8px 12px;border-radius:6px}
+.skip:focus{top:8px}
 header.site{position:sticky;top:0;z-index:20;background:var(--paper);border-bottom:1px solid var(--line)}
 header.site .in,main,footer .in{max-width:1080px;margin:0 auto;padding:0 20px}
 header.site .in{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding-top:9px;padding-bottom:9px}
@@ -194,7 +196,8 @@ input[type=range]{width:100%;accent-color:#0b5cad;min-height:28px}
 .lr-panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px 12px;margin:8px 0;padding:0}
 .lr-panel div{background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .lr-panel dt{font-size:.78rem;color:var(--muted)}.lr-panel dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
-.err-strip .bar{fill:#0b5cad;cursor:pointer}.err-strip .bar.cur{fill:#f2b600}
+.err-strip .bar{fill:#0b5cad}.err-strip .bar.cur{fill:#f2b600}
+.err-strip .clip{fill:#0b5cad}.err-strip .clip.nc{fill:#5b6570}
 .err-strip .nc-dot{fill:#5b6570}.err-strip .band{fill:#e6eef8}.err-strip .band-label,.err-strip .yr{font-size:12px;fill:#4b5560}
 figure.strip{margin:8px 0 4px}
 @media (max-width:699px){
@@ -229,7 +232,7 @@ def page(fname, title, body, description):
         '<meta property="og:type" content="website"><meta property="og:title" content="%s"><meta property="og:description" content="%s">'
         '<meta property="og:image" content="%s/og.png"><meta property="og:url" content="%s/%s"><meta name="twitter:card" content="summary_large_image">'
         '<link rel="stylesheet" href="style.css"></head><body>'
-        '<a href="#main" style="position:absolute;left:-999px" onfocus="this.style.left=\'8px\'">Skip to content</a>'
+        '<a class="skip" href="#main">Skip to content</a>'
         '<header class="site"><div class="in"><a class="brand" href="index.html">Fuel, Cars &amp; Pollution</a><nav aria-label="Site">%s</nav></div></header>'
         '<main id="main">%s</main>'
         '<footer><div class="in">Built for the HydraDB Hackathon (Track 1). Data: U.S. EIA, FHWA and EPA (U.S. government works), '
@@ -277,6 +280,60 @@ class Ctx:
 
 def lw(ex, m):
     return "<b>loses to</b>" if ex["graph"] > ex[m] else "beats"
+
+
+def strength(w):
+    a = abs(w)
+    return "strongly" if a >= 0.5 else "partly" if a >= 0.1 else "barely"
+
+
+def note_2008(r):
+    row = next((p for p in r["per_year"] if p["year"] == 2008), None)
+    if not row or row["actual_co2"] is None or row["inputs"].get("VMT") is None:
+        return ""
+    return " In 2008 its inputs moved far less than CO2 did: miles driven %+.1f vs CO2 %+.1f (100·ln points)." % (row["inputs"]["VMT"], row["actual_co2"])
+
+
+def design_line(sc):
+    g, k = sc["graph"]["design_mae"], sc["knn"]["design_mae"]
+    if k < g:
+        return "On the design years 1982–2004, k-NN did better than the graph (%s vs %s)." % (pct(k), pct(g))
+    return "On the design years 1982–2004, the graph did better than k-NN (%s vs %s)." % (pct(g), pct(k))
+
+
+def vmt_line(s):
+    v, e = s["vmt_check"], s["excluding_2011"]
+    out = ("FHWA&rsquo;s VM-203 table (the pre-registered miles source) puts %d at %+.2f%% versus FHWA&rsquo;s own VM-1 table; the other %d years agree within %.2f%%." % (
+        v["worst_year"], v["worst_gap_pct"], v["years_compared"] - 1, v["max_other_gap_pct"]))
+    if "next_year" in v:
+        out += (" That makes the %d miles change %+.2f instead of %+.2f. The official run keeps VM-203 as pre-registered; scored without %d (n = %d): "
+                "graph %s, no change %s, k-NN %s, frozen %s." % (
+                    v["next_year"], v["next_change_vm203"], v["next_change_vm1"], v["next_year"], e["n"],
+                    pct(e["graph"]), pct(e["no_change"]), pct(e["knn"]), pct(e["frozen_graph"])))
+    return out
+
+
+def gap_note(c, first, last):
+    span = str(first) if first == last else "%d–%d" % (first, last)
+    from fcp.learn import REQUIRED_INPUTS, VAR_SERIES, changes
+
+    ch = changes(c.series)
+    missing = sorted({v for y in range(first, last + 1) for v in REQUIRED_INPUTS if ch[v].get(y) is None})
+    names = {"Crude": "crude oil price", "Gasoline": "gasoline price", "VMT": "miles driven"}
+    why = ", ".join(names[v] for v in missing) or "an input"
+    return "%s skipped: no prediction, because the %s change is missing (%s)." % (span, why, ", ".join(c.series[VAR_SERIES[v]]["sources"][0] for v in missing))
+
+
+def rerun_note(sc, r):
+    path = os.path.join(ROOT, "results", "archive", "run3_learning_results.json")
+    if not os.path.exists(path):
+        return ""
+    prev = load_json(path)
+    return ('<p class="note">k-NN was rerun once: an independent review found that run 3 only used neighbour years with every other input present, which the '
+            'pre-registration does not ask for. Run 3 tuned k = %d, window %s, holdout %s; this run follows the pre-registered wording and re-tunes on the design '
+            'years only: k = %d, window %s, holdout %s. Nothing else changed. Run 3 is archived in <code>results/archive/</code>.</p>' % (
+                prev["tuning"]["knn_k"], prev["tuning"]["knn_window"] or "all", pct(prev["scores_co2"]["knn"]["holdout_mae"]),
+                r["tuning"]["knn_k"], r["tuning"]["knn_window"] or "all", pct(sc["knn"]["holdout_mae"])))
 
 
 def pct(v):
@@ -362,22 +419,24 @@ def results_section(c):
                '<li>Without 2020 and 2021 (n = %d) the graph\'s average miss is <b>%s</b> points: it %s no change (%s), %s k-NN (%s) and %s its own frozen version (%s).</li>'
                '<li>%s 95%% bootstrap interval of the difference includes zero. With n = %d years, the ranking is not statistically settled.</li>'
                '<li>Year by year, the graph beats no change in %d of %d years and k-NN in %d of %d.</li>'
-               '<li>Its largest misses: %s. The 2008 recession did not show up in prices and miles driven.</li>'
-               '<li>On the design years 1982–2004, k-NN did better than the graph (%s vs %s).</li>'
+               '<li>Its largest misses: %s.%s</li>'
+               '<li>%s</li>'
+               '<li>%s</li>'
                '<li>Inputs are today&rsquo;s revised figures, not the first-release values available at the time; real-time accuracy is unmeasured.</li>'
-               '<li>2009 and 2010 are not scored: FHWA marks 2009 vehicle-miles as unavailable.</li></ul></section>' % (
-                   "The pass rests on two pandemic years" if lose_all else "Read the limits first",
+               '<li>2009 and 2010 are not scored: FHWA&rsquo;s VM-203 table, the pre-registered miles source, marks 2009 as unavailable.</li>'
+               '<li>The k-NN baseline was rerun once to match the pre-registered wording exactly; see the scores below.</li></ul></section>' % (
+                   ("The pass rests on two pandemic years" if r["verdict"] == "PASS" else "It failed, and here is by how much") if lose_all else "Read the limits first",
                    ex["n"], pct(ex["graph"]), lw(ex, "no_change"), pct(ex["no_change"]), lw(ex, "knn"), pct(ex["knn"]), lw(ex, "frozen_graph"), pct(ex["frozen_graph"]),
                    "Every" if all(v["low"] <= 0 <= v["high"] for v in r["bootstrap_95"].values()) else "Not every", s["holdout_n"],
-                   wins["no_change"], s["holdout_n"], wins["knn"], s["holdout_n"], esc(worst),
-                   pct(sc["knn"]["design_mae"]), pct(sc["graph"]["design_mae"])))
+                   wins["no_change"], s["holdout_n"], wins["knn"], s["holdout_n"], esc(worst), note_2008(r),
+                   design_line(sc), vmt_line(s)))
     out.append(replay_flow(c))
     out.append('<section id="scores" aria-labelledby="scores-h"><div class="lane" aria-hidden="true"></div><p class="eyebrow">Scores</p>'
                '<h2 id="scores-h">Average miss on the yearly change in U.S. transport CO2</h2>'
-               '<p class="lede">Percentage points of 100·ln change, holdout 2005–2024 (n = %d). Lower is better. Settings were picked on 1982–2004 only.</p>%s'
+               '<p class="lede">Percentage points of 100·ln change, holdout 2005–2024 (n = %d). Lower is better. Settings were picked on 1982–2004 only.</p>%s%s'
                '<details><summary>Table: holdout, without 2020–21, and design-period scores</summary><div class="tablewrap"><table><caption>MAE of the predicted yearly change in U.S. transport CO2</caption>'
                '<thead><tr><th scope="col">Model</th><th scope="col">Holdout MAE</th><th scope="col">n</th><th scope="col">Without 2020–21 (n=%d)</th><th scope="col">Design MAE (n=%d)</th></tr></thead><tbody>%s</tbody></table></div></details>'
-               % (sc["graph"]["holdout_n"], score_bars(sc, ex, names), ex["n"], sc["graph"]["design_n"], rows))
+               % (sc["graph"]["holdout_n"], score_bars(sc, ex, names), rerun_note(sc, r), ex["n"], sc["graph"]["design_n"], rows))
     out.append('<div class="card wide"><h3>The pre-registered rule</h3><p class="note">All four parts must pass. <a href="%s/blob/main/PREREGISTRATION.md">Rule text</a>, committed before the first run.</p>'
                '<div class="tablewrap"><table><thead><tr><th scope="col">Part</th><th scope="col">Threshold</th><th scope="col">Value</th><th scope="col">Margin</th><th scope="col">Result</th></tr></thead><tbody>%s</tbody></table></div></div>' % (REPO_URL, rule_rows))
     out.append('<div class="card wide"><h3>Uncertainty</h3><p class="note">Paired bootstrap 95%% interval of the holdout MAE difference (negative = graph better); %d resamples, seed %d.</p>'
@@ -408,7 +467,7 @@ def results_section(c):
                'Parity is not bit-identical: %s</p>' % (
                    "{:,}".format(hy["http_requests"]), hy["seconds"], "{:,}".format(nc.get("LinkState", 0)), "{:,}".format(nc.get("Prediction", 0)),
                    hy["parity"]["max_abs_diff"],
-                   ("in a separate test HydraDB returned %d of %d floats one unit in the last place away from what was written; the tiny drift compounds over the yearly refits." % (c.rt["mismatches"], c.rt["values_tested"])) if c.rt else "cause not measured."))
+                   ("in a separate test HydraDB returned %d of %d floats one unit in the last place away from what was written; this is a likely cause of the gap, not a proven one." % (c.rt["mismatches"], c.rt["values_tested"])) if c.rt else "cause not measured."))
     return "".join(out)
 
 
@@ -424,7 +483,6 @@ def weights_table(w):
 
 def how_section(c):
     r = c.res
-    w = r["final_weights"]
     wy = r["link_weights_by_year"]
     lines = []
     for lid, a, b in LINKS:
@@ -476,13 +534,12 @@ def flow_data(c):
     for p in r["per_year"]:
         note = ""
         if prev is not None and p["year"] != prev + 1:
-            note = "%s skipped: no prediction because miles driven for 2009 is missing in the FHWA file." % (
-                "%d–%d" % (prev + 1, p["year"] - 1) if p["year"] - 1 > prev + 1 else str(prev + 1))
+            note = gap_note(c, prev + 1, p["year"] - 1)
         years.append({"year": p["year"], "period": p["period"], "inputs": p["inputs"], "pred": p["graph"], "pred_fuel": p["graph_fuel"],
                       "actual": p["actual_co2"], "actual_fuel": p["actual_fuel"], "knn": p["knn"], "note": note})
         prev = p["year"]
     data = {"weights": r["final_weights"], "history": r["link_weights_by_year"], "years": years,
-            "start_year": years[0]["year"], "holdout_start": min(r["config"]["holdout_years_scored"])}
+            "holdout_start": min(r["config"]["holdout_years_scored"])}
     return json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
 
 
@@ -508,14 +565,16 @@ def shock_flow(c):
         '<label>Miles driven change <output id="fx-vmt-v"></output><input id="fx-vmt" type="range" min="-15" max="15" step="0.5" value="0"></label>'
         '<label>EV share of new cars change <output id="fx-ev-v"></output><input id="fx-ev" type="range" min="-5" max="10" step="0.5" value="0"></label></div>'
         '<p class="flow-summary" aria-live="polite"></p>'
-        '<p class="note">What the links say, in plain words: oil prices pass strongly into pump prices (×%.2f), but year-to-year pump price swings barely changed how much gasoline '
-        'was burned (×%.2f). Miles driven did (×%.2f). Effects only: the yearly trend terms are left out so you see what each change does. '
+        '<p class="note">What the links say, in plain words: oil price changes pass %s into pump prices (×%.2f); pump price changes move gasoline burned %s (×%.2f); '
+        'miles driven move it %s (×%.2f). Changes are entered and shown in percent; the model works in log points (100·ln) and converts. '
+        'Effects only: the yearly trend terms are left out so you see what each change does. '
         'This is arithmetic on the weights learned through %d; it was not tested as a scenario model, and co-movement is not proof of cause.</p>'
         '<noscript><p class="note">The animation needs JavaScript. The learned weights are in the table below.</p></noscript>'
         '<p class="source">Source: learned link weights in <code>results/learning_results.json</code> (<code>final_weights</code>), fitted on EIA, FHWA and Ember files listed on the '
         '<a href="sources.html">sources page</a>.</p>%s</section>'
     ) % (flow_stage("Price-change flowchart: crude oil, gasoline price, miles driven and EV share feed gasoline burned, which feeds transport CO2"),
-         w["Gasoline"]["Crude->Gasoline"], w["FuelUse"]["Gasoline->FuelUse"], w["FuelUse"]["VMT->FuelUse"], last, weights_table(w))
+         strength(w["Gasoline"]["Crude->Gasoline"]), w["Gasoline"]["Crude->Gasoline"], strength(w["FuelUse"]["Gasoline->FuelUse"]), w["FuelUse"]["Gasoline->FuelUse"],
+         strength(w["FuelUse"]["VMT->FuelUse"]), w["FuelUse"]["VMT->FuelUse"], last, weights_table(w))
 
 
 def replay_flow(c):
@@ -532,9 +591,10 @@ def replay_flow(c):
         '%s'
         '<dl class="lr-panel"><div><dt>Year</dt><dd data-f="year"></dd></div><div><dt>Period</dt><dd data-f="period"></dd></div>'
         '<div><dt>Predicted CO2 change</dt><dd data-f="pred"></dd></div><div><dt>Actual (EIA)</dt><dd data-f="actual"></dd></div>'
-        '<div><dt>Graph error</dt><dd data-f="err"></dd></div><div><dt>No-change error</dt><dd data-f="nc"></dd></div><div><dt>k-NN error</dt><dd data-f="knn"></dd></div></dl>'
+        '<div><dt>Graph miss</dt><dd data-f="err"></dd></div><div><dt>No-change miss</dt><dd data-f="nc"></dd></div><div><dt>k-NN miss</dt><dd data-f="knn"></dd></div></dl>'
+        '<p class="note">Changes are shown in percent. Misses are in points of 100·ln change, the unit the test is scored in.</p>'
         '<p class="note" data-f="note" aria-live="polite"></p>'
-        '<figure class="strip"><figcaption class="ctitle">Graph error by year (bars) and no-change error (dots), points of CO2 change; click a bar to jump there</figcaption>'
+        '<figure class="strip"><figcaption class="ctitle">Graph miss by year (bars) and no-change miss (dots), points of 100·ln CO2 change; ▲ marks a value above the top of the strip</figcaption>'
         '<svg class="err-strip chart" role="img" aria-label="Absolute error of the graph per year, with the no-change error as dots; the data table is under the Predicted vs actual chart."></svg>'
         '<p class="source">Source: <code>results/learning_results.json</code> (<code>per_year</code>, <code>link_weights_by_year</code>). Data tables: '
         '<a href="#pred">predicted vs actual</a> and <a href="#weights">learned link strengths</a>.</p></figure></section>'
@@ -578,7 +638,7 @@ def data_section(c):
         r_ = k.get("pearson_r")
         rows.append("<tr><td>%s</td><td>%s</td><td>%s</td><td>%d</td><td>%s–%s</td><td>%s</td><td>%s</td></tr>" % (
             esc(k["x_label"]), esc(k["y_label"]), esc(k["region"]), k["n"], k["first_year"], k["last_year"],
-            ('%.2f<span class="rbar %s" style="width:%dpx" aria-hidden="true"></span>' % (r_, "pos" if r_ >= 0 else "neg", round(abs(r_) * 60))) if r_ is not None else "n/a",
+            ('%.2f<span class="rbar %s" style="width:%dpx" aria-hidden="true"></span>' % (r_, "pos" if r_ >= 0 else "neg", round(abs(r_) * 60))) if r_ is not None and r_ == r_ else "n/a",
             "%.2f" % k["spearman_rho"] if k.get("spearman_rho") is not None else "n/a"))
     out.append('<h3>Do they move together?</h3><p>Correlations of <b>year-over-year changes</b> (100·ln change; EV share: change in points), same region, same years, flagged values left out. '
                'Two rising levels correlate by accident; changes are a stricter test. These numbers describe co-movement only. <b>They do not show cause.</b> Small n (EV rows) means very wide uncertainty.</p>')
@@ -612,10 +672,13 @@ def sources_page(c):
         '<h1>Sources &amp; licences</h1>'
         '<p class="lede">Every number on this site is read from one of the files below. <code>fcp/fetch.py</code> downloaded each one and recorded its URL, '
         'retrieval time and SHA-256 in <code>data/manifest.json</code>; <code>tests/test_data.py</code> re-reads the raw files and checks both. '
-        'Licences were read on the linked pages on the retrieval date. Release and update dates in the citations are read from the files themselves.</p>'
+        'Licences were read on the linked pages on the retrieval date. Release and update dates in the citations are read from the downloaded files; for the '
+        'Monthly Energy Review tables, from EIA&rsquo;s Monthly Energy Review page downloaded the same day.</p>'
         '<h2>Data</h2>%s'
-        '<h2>Software</h2><p>Only open-source software is used. No third-party JavaScript, stylesheet, font or image is loaded by the site: the flowchart script, '
-        'favicon and share image were written for this project. Fonts are not bundled; the pages name fonts that a reader\'s device may already have.</p>'
+        '<h2>Software</h2><p>All software is open source except the HydraDB engine, which is source-available under the Elastic License 2.0 and was used under '
+        'the hackathon&rsquo;s terms. No third-party JavaScript, stylesheet, font or image is loaded by the site: the flowchart script, '
+        'favicon and share image were made for this project. Fonts are not bundled; the pages name fonts that a reader\'s device may already have. '
+        'The share image&rsquo;s text is set in Aileron Regular by Sora Sagano (dot colon), released under CC0 1.0 and shipped inside Pillow.</p>'
         '<div class="tablewrap"><table class="text"><thead><tr><th scope="col">Software</th><th scope="col">Licence</th><th scope="col">Used for</th></tr></thead>'
         '<tbody>%s</tbody></table></div>'
         '<p>Cite the graph engine as: %s</p>'
@@ -632,7 +695,7 @@ def sources_page(c):
 PRIVACY = (
     '<h1>Privacy</h1><p class="lede">Short version: this site collects nothing about you.</p><ul class="plain">'
     '<li><b>No tracking.</b> No cookies, analytics, advertising, fingerprinting, forms or accounts. The pages load nothing from any other website; '
-    'an automated test checks this on every build.</li>'
+    'the project&rsquo;s test suite checks every page for this.</li>'
     '<li><b>The calculator stays in your browser.</b> The sliders and buttons run locally; nothing you choose is sent anywhere.</li>'
     '<li><b>Hosting.</b> The files are served by Netlify. Like any web host, Netlify may record technical request data such as IP address, browser type and '
     'time of request in its server logs, under <a href="https://www.netlify.com/privacy/">Netlify\'s privacy policy</a>. This project does not receive or use those logs.</li>'

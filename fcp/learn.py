@@ -269,8 +269,9 @@ def run_knn(ch, k, window):
     for year in range(FIRST_YEAR, last_year(ch) + 1):
         if not can_predict(ch, year):
             continue
-        lo = FIRST_YEAR if window is None else year - window
-        pool = [y for y in range(max(lo, FIRST_YEAR), year) if ch["CO2"].get(y) is not None and can_predict(ch, y)]
+        first = min(ch["CO2"])
+        lo = first if window is None else max(first, year - window)
+        pool = [y for y in range(lo, year) if ch["CO2"].get(y) is not None]
         if not pool:
             continue
         stats = {}

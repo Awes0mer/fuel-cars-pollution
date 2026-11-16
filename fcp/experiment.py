@@ -41,9 +41,10 @@ def reset_hydra(client, ch):
     rows = [{"id": i} for i in owned_ids(ch)]
     for i in range(0, len(rows), 1000):
         client.query("UNWIND $rows AS row MATCH (n {id: row.id}) DETACH DELETE n", {"rows": rows[i:i + 1000]})
-    left = client.query("MATCH (n {id: $id}) RETURN n.id AS id", {"id": 1})
-    if left:
-        raise RuntimeError("id range not empty after reset")
+    probe = list(L.VAR_IDS.values()) + [lid for lid, _, _ in L.LINKS] + list(L.FIT_IDS.values())
+    for nid in probe:
+        if client.query("MATCH (n {id: $id}) RETURN n.id AS id", {"id": nid}):
+            raise RuntimeError("node %d still present after reset" % nid)
 
 
 def pick(grid_scores, keyfn):
@@ -54,11 +55,11 @@ def pick(grid_scores, keyfn):
 
 
 def tune(ch):
-    design_g = scored = L.scored_years(ch, L.DESIGN_YEARS)
+    scored = L.scored_years(ch, L.DESIGN_YEARS)
     graph_grid, direct_grid, knn_grid = [], [], []
     for lam in L.LAMBDA_GRID:
         p, _ = L.run_graph(MemoryStore(), ch, lam, write_history=False)
-        graph_grid.append((lam, L.mae(p, ch, design_g)[0]))
+        graph_grid.append((lam, L.mae(p, ch, scored)[0]))
         d = L.run_direct(ch, lam)
         direct_grid.append((lam, L.mae(d, ch, scored)[0]))
     for k in L.K_GRID:
@@ -127,13 +128,14 @@ def main():
             "parity": parity(mem_preds, hy_preds),
             "endpoint": "http://127.0.0.1:8443 (local mode, loopback only)",
         }
+    graph_preds, graph_weights = (hy_preds, hy_weights) if hydra else (mem_preds, mem_weights)
     frozen_preds, _ = L.run_graph(MemoryStore(), ch, lam, freeze_after=L.FREEZE_AFTER, write_history=False)
     knn_preds = L.run_knn(ch, tuned["knn_k"], tuned["knn_window"])
     nochange_preds = L.run_no_change(ch)
     direct_preds = L.run_direct(ch, tuned["direct_lambda"])
 
     models = {
-        "graph": mem_preds,
+        "graph": graph_preds,
         "no_change": nochange_preds,
         "knn": knn_preds,
         "frozen_graph": frozen_preds,
@@ -154,7 +156,7 @@ def main():
     for target in ("FuelUse", "Gasoline"):
         yrs = L.scored_years(ch, L.HOLDOUT_YEARS, target)
         secondary[target] = {
-            "graph_holdout_mae": L.mae(mem_preds, ch, yrs, target)[0],
+            "graph_holdout_mae": L.mae(graph_preds, ch, yrs, target)[0],
             "no_change_holdout_mae": L.mae(nochange_preds, ch, yrs, target)[0],
             "n": len(yrs),
         }
@@ -179,20 +181,21 @@ def main():
 
     boot = {}
     for other in ("no_change", "knn", "frozen_graph", "direct_regression"):
-        lo, hi = L.bootstrap_diff(mem_preds, models[other], ch, hold)
+        lo, hi = L.bootstrap_diff(graph_preds, models[other], ch, hold)
         boot["graph_minus_" + other] = {"low": lo, "high": hi}
 
     per_year = []
     for y in range(L.FIRST_YEAR, L.last_year(ch) + 1):
-        if y not in mem_preds:
+        if y not in graph_preds:
             continue
-        row = {"year": y, "period": "holdout" if y in L.HOLDOUT_YEARS else ("design" if y in L.DESIGN_YEARS else "burn-in"),
+        period = "holdout" if y in L.HOLDOUT_YEARS else "design" if y in L.DESIGN_YEARS else "burn-in" if y < min(L.DESIGN_YEARS) else "after holdout"
+        row = {"year": y, "period": period,
                "actual_co2": ch["CO2"].get(y)}
         for name, p in models.items():
             row[name] = p[y]["CO2"] if y in p else None
-        row["graph_fuel"] = mem_preds[y]["FuelUse"]
+        row["graph_fuel"] = graph_preds[y]["FuelUse"]
         row["actual_fuel"] = ch["FuelUse"].get(y)
-        row["graph_gasoline"] = mem_preds[y]["Gasoline"]
+        row["graph_gasoline"] = graph_preds[y]["Gasoline"]
         row["actual_gasoline"] = ch["Gasoline"].get(y)
         row["inputs"] = L.year_inputs(ch, y)
         if y in knn_preds:
@@ -215,8 +218,9 @@ def main():
         "verdict": verdict,
         "bootstrap_95": boot,
         "per_year": per_year,
-        "link_weights_by_year": {str(y): w for y, w in mem_weights.items()},
-        "final_weights": mem_weights[max(mem_weights)],
+        "graph_predictions_from": "hydradb" if hydra else "memory",
+        "link_weights_by_year": {str(y): w for y, w in graph_weights.items()},
+        "final_weights": graph_weights[max(graph_weights)],
         "seconds_total": round(time.time() - t0, 2),
     }
     os.makedirs(os.path.dirname(L.results_path()), exist_ok=True)

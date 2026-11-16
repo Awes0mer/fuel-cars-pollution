@@ -187,7 +187,7 @@ NOT_COVERED = [
 ]
 
 
-# Every piece of third-party software the project uses, with its licence.
+# Third-party software the project imports or runs, with its licence (test-only packages included).
 # tests/test_licences.py checks each licence against the installed package metadata.
 SOFTWARE = [
     {"name": "Python standard library", "package": None, "licence": "PSF License 2.0", "url": "https://docs.python.org/3/license.html",
@@ -202,6 +202,11 @@ SOFTWARE = [
      "role": "Draws the share image (og.png)."},
     {"name": "pytest", "package": "pytest", "licence": "MIT", "url": "https://github.com/pytest-dev/pytest",
      "role": "Runs the tests; not needed to view the site."},
+    {"name": "pluggy", "package": "pluggy", "licence": "MIT", "url": "https://github.com/pytest-dev/pluggy", "role": "Installed with pytest (tests only)."},
+    {"name": "iniconfig", "package": "iniconfig", "licence": "MIT", "url": "https://github.com/pytest-dev/iniconfig", "role": "Installed with pytest (tests only)."},
+    {"name": "packaging", "package": "packaging", "licence": "Apache-2.0 OR BSD-2-Clause", "url": "https://github.com/pypa/packaging", "role": "Installed with pytest (tests only)."},
+    {"name": "Pygments", "package": "pygments", "licence": "BSD-2-Clause", "url": "https://github.com/pygments/pygments", "role": "Installed with pytest (tests only)."},
+    {"name": "colorama", "package": "colorama", "licence": "BSD", "url": "https://github.com/tartley/colorama", "role": "Installed with pytest on Windows (tests only)."},
     {"name": "HydraDB v0.4.0", "package": None, "licence": "Elastic License 2.0", "url": "https://github.com/hydra-db/hydradb",
      "role": "Graph engine, self-hosted for the learning run under the hackathon's permission. Not included in this repository and not offered as a service."},
 ]
