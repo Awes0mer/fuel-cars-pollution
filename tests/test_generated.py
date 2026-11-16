@@ -48,6 +48,10 @@ def test_verdict_follows_rule():
 
 
 def test_preregistration_committed_once_and_before_results():
+    import pytest
+
+    if not os.path.exists(os.path.join(ROOT, ".git")):
+        pytest.skip("no git history in a plain copy; checked in the repository")
     prereg = git("log", "--format=%H", "--", "PREREGISTRATION.md").splitlines()
     assert len(prereg) == 1, "PREREGISTRATION.md must never be edited after its first commit"
     first_results = git("log", "--diff-filter=A", "--format=%H", "--", "results/learning_results.json").splitlines()

@@ -28,8 +28,18 @@ RAW_PATTERNS = ("email", "aws_key", "github_token", "openai_like_key", "slack_to
 
 
 def tracked_files():
-    out = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True)
-    return [p for p in out.splitlines() if p and p != SELF]
+    if os.path.isdir(os.path.join(ROOT, ".git")) or os.path.isfile(os.path.join(ROOT, ".git")):
+        out = subprocess.check_output(["git", "ls-files"], cwd=ROOT, text=True)
+        return [p for p in out.splitlines() if p and p != SELF]
+    # Plain copy (e.g. a Desktop save): scan every file except caches.
+    files = []
+    for d, dirs, names in os.walk(ROOT):
+        dirs[:] = [x for x in dirs if x not in (".git", "__pycache__", ".pytest_cache", ".hydradb")]
+        for n in names:
+            rel = os.path.relpath(os.path.join(d, n), ROOT).replace(os.sep, "/")
+            if rel != SELF and rel != "SAVE-INFO.txt":
+                files.append(rel)
+    return files
 
 
 def test_no_private_data_in_tracked_files():
