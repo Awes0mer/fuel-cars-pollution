@@ -56,10 +56,12 @@ class HydraStore:
         self.c = client
 
     def put(self, label, rows):
-        if not rows:
-            return
-        props = [k for k in rows[0] if k != "id"]
-        self.c.upsert_nodes(label, rows, props)
+        # One UNWIND batch per distinct property set (fit nodes differ in size).
+        groups = {}
+        for r in rows:
+            groups.setdefault(tuple(k for k in r if k != "id"), []).append(r)
+        for props, batch in groups.items():
+            self.c.upsert_nodes(label, batch, list(props))
 
     def edge(self, rel, pairs):
         if pairs:
