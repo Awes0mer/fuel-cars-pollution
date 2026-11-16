@@ -7,7 +7,7 @@ import subprocess
 from fcp.fetch import ROOT
 
 SELF = "tests/test_privacy.py"
-BINARY = (".xlsx", ".xls", ".png", ".jpg", ".gif", ".ico", ".pdf", ".zip")
+BINARY = (".xlsx", ".xls", ".png", ".jpg", ".gif", ".ico", ".pdf", ".zip", ".mp4")
 
 PATTERNS = {
     "email": re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}"),
