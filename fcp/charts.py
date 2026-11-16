@@ -57,9 +57,9 @@ def fmt(v, digits=2):
     return ("%." + str(digits) + "f") % v
 
 
-def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, x_range=None, unit_note="", digits=2, shade=None):
+def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, x_range=None, unit_note="", digits=2, shade=None, width=560, height=340):
     """lines: list of dicts {label, values: {year: v}, flags: {year: flag}}."""
-    W, H = 720, 360
+    W, H = width, height
     L, R, T, B = 64, 16, 16, 44
     all_years = sorted({int(y) for ln in lines for y in ln["values"]})
     if x_range:
@@ -73,7 +73,10 @@ def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, x_ra
         lo = min(lo, 0.0)
         hi = max(hi, 0.0)
     pad = (hi - lo) * 0.06 or 1.0
-    ticks = nice_ticks(lo - pad, hi + pad)
+    floor = lo - pad
+    if lo >= 0 and floor < 0:
+        floor = 0.0  # all-positive series: the axis starts at zero, not below it
+    ticks = nice_ticks(floor, hi + pad)
     ylo, yhi = ticks[0], ticks[-1]
 
     def X(y):
@@ -147,6 +150,7 @@ def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, x_ra
     )
     flag_note = '<p class="note">Hollow markers are flagged values (provisional, partial, estimated or carried forward); they are shown but left out of correlations and scoring.</p>' if has_flags else ""
     return (
-        '<figure id="%s"><figcaption class="ctitle">%s</figcaption><ul class="legend">%s</ul>%s%s'
-        '<p class="source">%s</p>%s</figure>' % (cid, esc(title), legend, svg, flag_note, source_line, table)
+        '<figure id="%s"><figcaption class="ctitle">%s</figcaption>%s%s%s'
+        '<p class="source">%s</p>%s</figure>' % (cid, esc(title), ('<ul class="legend">%s</ul>' % legend) if len(lines) > 1 else "",
+                                                 svg, flag_note, source_line, table)
     )
