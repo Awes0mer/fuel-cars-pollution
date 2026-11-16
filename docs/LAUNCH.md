@@ -4,7 +4,7 @@
 
 ## Needs the author's explicit go, one action at a time
 
-1. Host the static site: done, public at https://fuel-cars-pollution.netlify.app.
+1. Host the static site: done, public at https://awes0mer.github.io/fuel-cars-pollution/ (the old netlify.app address redirects there).
 2. Make the GitHub repository public.
 3. Record the Loom walkthrough.
 4. Submit the hackathon form.

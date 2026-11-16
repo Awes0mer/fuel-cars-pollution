@@ -18,7 +18,7 @@ from fcp.stats import CORR_OUT, SUMMARY_OUT
 
 SITE = os.path.join(ROOT, "site")
 ROUNDTRIP = os.path.join(ROOT, "results", "hydradb_float_roundtrip.json")
-SITE_URL = "https://fuel-cars-pollution.netlify.app"
+SITE_URL = "https://awes0mer.github.io/fuel-cars-pollution"
 FAVICON = (
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#0b5cad"/>'
     '<path d="M14 20h14M30 22l12 10M30 44l12-10M44 32h8" stroke="#fff" stroke-width="4" fill="none"/>'
@@ -716,12 +716,13 @@ PRIVACY = (
     '<li><b>No tracking.</b> No cookies, analytics, advertising, fingerprinting, forms or accounts. The pages load nothing from any other website; '
     'the project&rsquo;s test suite checks every page for this.</li>'
     '<li><b>The calculator stays in your browser.</b> The sliders and buttons run locally; nothing you choose is sent anywhere.</li>'
-    '<li><b>Hosting.</b> The files are served by Netlify. Like any web host, Netlify may record technical request data such as IP address, browser type and '
-    'time of request in its server logs, under <a href="https://www.netlify.com/privacy/">Netlify\'s privacy policy</a>. This project does not receive or use those logs.</li>'
-    '<li><b>Unpublished previews</b> of new versions are limited to the project team by Netlify\'s own sign-in page, which is Netlify\'s, under its policy. '
-    'The published site needs no sign-in.</li>'
+    '<li><b>Hosting.</b> The files are served by GitHub Pages. Like any web host, GitHub may record technical request data such as the visitor&rsquo;s IP address '
+    'in its logs, under the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub General Privacy Statement</a>. '
+    'This project does not receive or use those logs.</li>'
+    '<li><b>Old address.</b> The earlier address on netlify.app only redirects here. Netlify may log that request under '
+    '<a href="https://www.netlify.com/privacy/">Netlify&rsquo;s privacy policy</a>.</li>'
     '<li><b>Data on the site.</b> Only public statistics from government and open-data publishers. No personal or business data.</li>'
-    '<li><b>Questions.</b> Open an issue on the <a href="%s">project repository</a> once it is public.</li></ul>'
+    '<li><b>Questions.</b> Open an issue on the <a href="%s">project repository</a>.</li></ul>'
 ) % REPO_URL
 
 TERMS = (
