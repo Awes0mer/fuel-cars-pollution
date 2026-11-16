@@ -36,6 +36,10 @@ export GRAPH_ADVERTISED_BOLT_ADDR=127.0.0.1:7687
 export GRAPH_DATA_CACHE_DIR="$RUN_DIR/cache"
 export GRAPH_AUTH_TOKEN_FILE="$RUN_DIR/auth-token"
 export GRAPH_ALLOW_PLAINTEXT=true
+# graph-node defaults to 0.0.0.0; bind every listener to loopback only.
+export GRAPH_BOLT_ADDR=127.0.0.1:7687
+export GRAPH_HTTP_ADDR=127.0.0.1:8443
+export GRAPH_ADMIN_ADDR=127.0.0.1:9090
 export GRAPH_USAGE_REPORT_ENABLED=false
 export RUST_MIN_STACK=33554432
 
