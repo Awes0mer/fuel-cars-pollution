@@ -96,7 +96,7 @@ def parity(pa, pb):
 def hydra_counts(client):
     out = {}
     for label in ("Variable", "Link", "Fit", "LinkState", "Prediction"):
-        rows = client.query("MATCH (n:%s) RETURN count(n) AS c" % label)
+        rows = client.query("MATCH (n:%s) RETURN count(*) AS c" % label)
         out[label] = int(rows[0]["c"]) if rows else 0
     return out
 
