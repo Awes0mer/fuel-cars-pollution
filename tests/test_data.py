@@ -174,17 +174,28 @@ def test_scrubber_namespace_and_unmatched_cdata_cases():
     assert b"Real Person" not in out and b"Other Person" not in out
 
 
-def test_mer_edition_only_when_release_page_proves_the_association(monkeypatch):
-    import datetime as dt
-
+def _mer_fixture(tmp_path, monkeypatch, release, t_table, t_index):
+    """Point cite at a fixed release page and fixed retrieval times (no real files involved)."""
     from fcp import cite
 
-    times = {}
-    monkeypatch.setattr(cite, "_retrieved", lambda sid: times.get(sid))
-    times.update(eia_mer_t0901=dt.datetime(2026, 11, 16, 5, 54, tzinfo=dt.timezone.utc),
-                 eia_mer_index=dt.datetime(2026, 11, 16, 7, 32, tzinfo=dt.timezone.utc))
-    assert cite.edition("eia_mer_t0901") is not None  # page read after the table: proven
-    times["eia_mer_t0901"] = dt.datetime(2026, 11, 16, 9, 0, tzinfo=dt.timezone.utc)
+    page = tmp_path / "index.html"
+    page.write_text('<span class="label">Release Date:</span> <span class="date">
+ %s </span>' % release, encoding="utf-8")
+    monkeypatch.setattr(cite, "_raw", lambda sid, name: str(page))
+    times = {"eia_mer_t0901": t_table, "eia_mer_index": t_index}
+    monkeypatch.setattr(cite, "_retrieved", times.get)
+    return cite
+
+
+def test_mer_edition_only_when_release_page_proves_the_association(tmp_path, monkeypatch):
+    import datetime as dt
+
+    utc = dt.timezone.utc
+    cite = _mer_fixture(tmp_path, monkeypatch, "October 29, 2026",
+                        dt.datetime(2026, 11, 16, 5, 54, tzinfo=utc), dt.datetime(2026, 11, 16, 7, 32, tzinfo=utc))
+    assert cite.edition("eia_mer_t0901") == "release of October 29, 2026"  # page read after the table: proven
+    cite = _mer_fixture(tmp_path, monkeypatch, "October 29, 2026",
+                        dt.datetime(2026, 11, 16, 9, 0, tzinfo=utc), dt.datetime(2026, 11, 16, 7, 32, tzinfo=utc))
     assert cite.edition("eia_mer_t0901") is None  # table read after the page: a release could sit between
 
 
@@ -198,14 +209,10 @@ def test_scrubber_decodes_character_references_in_namespace_declarations():
     assert author_values(out) == [] and b"Alice" not in out
 
 
-def test_mer_edition_withheld_for_same_day_release(monkeypatch):
+def test_mer_edition_withheld_for_same_day_release(tmp_path, monkeypatch):
     import datetime as dt
 
-    from fcp import cite
-
-    real = cite.dt.datetime.strptime
-    monkeypatch.setattr(cite, "_retrieved", lambda sid: {
-        "eia_mer_t0901": dt.datetime(2026, 10, 29, 8, 0, tzinfo=dt.timezone.utc),
-        "eia_mer_index": dt.datetime(2026, 10, 29, 20, 0, tzinfo=dt.timezone.utc)}.get(sid))
-    assert real("October 29, 2026", "%B %d, %Y").date() == dt.date(2026, 10, 29)
+    utc = dt.timezone.utc
+    cite = _mer_fixture(tmp_path, monkeypatch, "October 29, 2026",
+                        dt.datetime(2026, 10, 29, 8, 0, tzinfo=utc), dt.datetime(2026, 10, 29, 20, 0, tzinfo=utc))
     assert cite.edition("eia_mer_t0901") is None  # released the same day: the table may predate it
