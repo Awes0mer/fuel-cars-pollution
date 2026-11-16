@@ -26,9 +26,19 @@ def _raw(source_id, filename):
     return os.path.join(RAW, source_id, filename)
 
 
+def _retrieved_day(source_id):
+    with open(MANIFEST, encoding="utf-8") as f:
+        m = {e["id"]: e for e in json.load(f)["files"]}
+    return m[source_id]["retrieved_at_utc"][:10] if source_id in m else None
+
+
 def edition(source_id):
     """Release/update statement found inside the downloaded file, or None."""
     if source_id.startswith("eia_mer_"):
+        # The landing page states the current release. It only describes a table that was
+        # downloaded the same UTC day; otherwise the association is unknown and no date is given.
+        if _retrieved_day(source_id) != _retrieved_day("eia_mer_index"):
+            return None
         with open(_raw("eia_mer_index", "index.html"), encoding="utf-8", errors="replace") as f:
             m = re.search(r'Release Date:</span>\s*<span class="date">\s*([^<]+?)\s*</span>', f.read())
         return "release of %s" % m.group(1) if m else None

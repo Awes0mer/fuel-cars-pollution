@@ -98,8 +98,9 @@ def test_office_files_carry_no_personal_names_and_data_parts_are_unchanged():
             continue
         with open(os.path.join(ROOT, m["path"]), "rb") as f:
             z = zipfile.ZipFile(io.BytesIO(f.read()))
-        core = z.read("docProps/core.xml")
-        assert not re.search(rb"<(dc:creator|cp:lastModifiedBy)>[^<]+<", core), sid
+        from fcp.scrub import author_values
+
+        assert not author_values(z.read("docProps/core.xml")), sid
         if "parts_crc32_as_downloaded" in m:
             for info in z.infolist():
                 if info.filename != "docProps/core.xml":

@@ -164,8 +164,15 @@ def render():
     if prev:
         a("2. Run 3 completed (archived in `results/archive/run3_learning_results.json`). An independent code review then found that its k-NN baseline only used neighbour years that also had every other input, which PREREGISTRATION.md does not ask for. Run 3 tuned k-NN to k = %d, window %s, and scored it %s on the holdout." % (
             prev["tuning"]["knn_k"], prev["tuning"]["knn_window"] or "all", f2(prev["scores_co2"]["knn"]["holdout_mae"])))
-        a("3. Run 4, the result above, implements the pre-registered k-NN wording exactly and re-tunes it on the design years only: k = %d, window %s, holdout %s. The graph, the rule, the periods and the metric did not change. Run 4 also reports the HydraDB run's own predictions." % (
+        a("3. Run 4 implements the pre-registered k-NN wording exactly and re-tunes it on the design years only: k = %d, window %s, holdout %s. The graph, the rule, the periods and the metric did not change. Run 4 also reports the HydraDB run's own predictions." % (
             r["tuning"]["knn_k"], r["tuning"]["knn_window"] or "all", f2(sc["knn"]["holdout_mae"])))
+    run4 = os.path.join(ROOT, "results", "archive", "run4_learning_results.json")
+    if os.path.exists(run4):
+        p4 = load(run4)
+        keys = ("graph", "no_change", "knn", "frozen_graph", "direct_regression", "graph_fuel", "graph_gasoline")
+        diff = max(abs(x[k] - y[k]) for x, y in zip(p4["per_year"], r["per_year"]) for k in keys if x[k] is not None)
+        a("4. Run 5, the result above, fixes a storage bug a CodeRabbit review found: link-history and prediction node ids overlapped for two links, so HydraDB merged those node pairs. Predictions never read those nodes; every prediction and weight is identical to run 4 (largest difference %s, %s link-weight history). Run 4 is archived next to run 3." % (
+            ("%.3g" % diff), "same" if p4["link_weights_by_year"] == r["link_weights_by_year"] else "different"))
     a("")
     a("## Correlations (year-over-year changes)")
     a("")
@@ -227,6 +234,7 @@ def render():
     a("python -m fcp.roundtrip    # float round-trip check")
     a("python -m fcp.stats        # correlations and summary")
     a("python -m fcp.site         # static site in site/")
+    a("python -m fcp.ogimage      # share image site/og.png")
     a("python -m fcp.readme       # this file")
     a("python -m pytest -q        # tests, data check, privacy scan")
     a("```")

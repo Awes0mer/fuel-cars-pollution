@@ -55,6 +55,8 @@ def test_preregistration_committed_once_and_before_results():
     prereg = git("log", "--format=%H", "--", "PREREGISTRATION.md").splitlines()
     assert len(prereg) == 1, "PREREGISTRATION.md must never be edited after its first commit"
     first_results = git("log", "--diff-filter=A", "--format=%H", "--", "results/learning_results.json").splitlines()
+    if os.path.exists(results_path()):
+        assert first_results, "results file exists but was never committed: the ordering cannot be verified"
     if first_results:
         # merge-base --is-ancestor exits 0 when prereg is an ancestor of the results commit
         rc = subprocess.call(["git", "merge-base", "--is-ancestor", prereg[0], first_results[-1]], cwd=ROOT)
@@ -95,6 +97,10 @@ def test_pages_load_nothing_from_other_hosts():
         with open(path, encoding="utf-8") as f:
             text = f.read()
         assert not re.search(r"""\bsrc=["']?(https?:)?//""", text), path
-        assert not re.search(r"""<link[^>]+rel=["']?(stylesheet|preload|modulepreload|icon)[^>]+href=["']?(https?:)?//""", text), path
+        for tag in re.findall(r"<link\b[^>]*>", text, re.I):
+            rel = re.search(r"""\brel=["']?([^"'>\s]+)""", tag, re.I)
+            href = re.search(r"""\bhref=["']?([^"'>\s]+)""", tag, re.I)
+            if rel and href and rel.group(1).lower() in ("stylesheet", "preload", "modulepreload", "icon"):
+                assert not re.match(r"(https?:)?//", href.group(1)), (path, tag)
         assert not re.search(r"""url\(\s*["']?(https?:)?//""", text), path
         assert "@import" not in text, path

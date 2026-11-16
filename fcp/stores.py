@@ -8,7 +8,7 @@ Graph model in the store (HydraDB node ids are non-negative integers):
   Link nodes       id 101..199      label Link      {name, src, dst, w}
   Fit nodes        id 201..299      label Fit       {name, target, bias, p_<i>_<j>}
   LinkState nodes  id 1_000_000 + link_id*10_000 + year   label LinkState {link, year, w}
-  Prediction nodes id 2_000_000 + target_var*10_000 + year label Prediction {target, year, value}
+  Prediction nodes id 3_000_000 + target_var*10_000 + year label Prediction {target, year, value}
 Edges: (Variable)-[:FEEDS]->(Link)-[:INTO]->(Variable), (Fit)-[:FITS]->(Variable),
        (Link)-[:HISTORY]->(LinkState), (Prediction)-[:OF]->(Variable).
 """

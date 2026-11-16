@@ -63,7 +63,7 @@ The site also shows the data behind it (fuel prices, miles driven, vehicles per 
 - Links are nodes because v0.4.0 deduplicates edges on (source, target, type): an edge cannot carry a weight that changes and keeps history.
 - Each prediction is a graph walk: `MATCH (t {id: $id})<-[:INTO]-(s) RETURN s.id`, then anchored id reads of each link and fit node.
 - Writes use the documented shapes: `UNWIND $rows AS row MERGE (n {id: row.id}) SET n:Label, n.p = row.p` for nodes (labels cannot sit in an UNWIND pattern), `UNWIND … CREATE` for edges, `MATCH (n {id: $id}) SET …` for updates.
-- This run: 2167 HTTP queries in 32.92 s; graph after the run: 6 Variable, 5 Link, 3 Fit, 240 LinkState, 138 Prediction.
+- This run: 2167 HTTP queries in 34.61 s; graph after the run: 6 Variable, 5 Link, 3 Fit, 240 LinkState, 138 Prediction.
 - Same code on an in-memory store gives the parity check.
 
 Engine notes found while building (v0.4.0):
@@ -86,7 +86,8 @@ Run history, for honesty:
 
 1. Runs 1 and 2 crashed in the HydraDB step (a batching bug in this project's store code, then `count(n)` being unsupported) before any holdout score was computed or printed.
 2. Run 3 completed (archived in `results/archive/run3_learning_results.json`). An independent code review then found that its k-NN baseline only used neighbour years that also had every other input, which PREREGISTRATION.md does not ask for. Run 3 tuned k-NN to k = 5, window 10, and scored it 2.92 on the holdout.
-3. Run 4, the result above, implements the pre-registered k-NN wording exactly and re-tunes it on the design years only: k = 7, window 10, holdout 2.95. The graph, the rule, the periods and the metric did not change. Run 4 also reports the HydraDB run's own predictions.
+3. Run 4 implements the pre-registered k-NN wording exactly and re-tunes it on the design years only: k = 7, window 10, holdout 2.95. The graph, the rule, the periods and the metric did not change. Run 4 also reports the HydraDB run's own predictions.
+4. Run 5, the result above, fixes a storage bug a CodeRabbit review found: link-history and prediction node ids overlapped for two links, so HydraDB merged those node pairs. Predictions never read those nodes; every prediction and weight is identical to run 4 (largest difference 0, same link-weight history). Run 4 is archived next to run 3.
 
 ## Correlations (year-over-year changes)
 
@@ -177,6 +178,7 @@ python -m fcp.experiment   # pre-registered run -> results/learning_results.json
 python -m fcp.roundtrip    # float round-trip check
 python -m fcp.stats        # correlations and summary
 python -m fcp.site         # static site in site/
+python -m fcp.ogimage      # share image site/og.png
 python -m fcp.readme       # this file
 python -m pytest -q        # tests, data check, privacy scan
 ```

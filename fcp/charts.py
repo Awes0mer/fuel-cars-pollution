@@ -38,8 +38,10 @@ def nice_ticks(lo, hi, n=5):
     start = math.floor(lo / step) * step
     ticks = []
     v = start
-    while v <= hi + step * 0.5:
+    while True:
         ticks.append(round(v, 10))
+        if v >= hi:
+            break
         v += step
     return ticks
 
@@ -105,8 +107,11 @@ def line_chart(cid, title, desc, lines, y_label, source_line, y_zero=False, unit
         flags = {int(y): f for y, f in ln.get("flags", {}).items()}
         seg, segs = [], []
         for y in all_years:
-            if y in pts:
+            if y in pts and (not seg or y == seg[-1] + 1):
                 seg.append(y)
+            elif y in pts:
+                segs.append(seg)
+                seg = [y]
             elif seg:
                 segs.append(seg)
                 seg = []

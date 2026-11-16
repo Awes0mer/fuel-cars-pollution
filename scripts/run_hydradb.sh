@@ -19,9 +19,11 @@ mkdir -p "$RUN_DIR/store" "$RUN_DIR/cache"
 if [ -n "$(ls -A "$RUN_DIR/store")" ]; then echo "store not empty" >&2; exit 1; fi
 
 TOKEN="$(head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n')"
-printf '%s\n' "$TOKEN" > "$RUN_DIR/auth-token"
-chmod 600 "$RUN_DIR/auth-token"
 mkdir -p "$(dirname "$TOKEN_OUT")"
+# create both token files private (0600) before any secret is written
+( umask 077; : > "$RUN_DIR/auth-token"; : > "$TOKEN_OUT" )
+chmod 600 "$RUN_DIR/auth-token" "$TOKEN_OUT"
+printf '%s\n' "$TOKEN" > "$RUN_DIR/auth-token"
 printf '%s\n' "$TOKEN" > "$TOKEN_OUT"
 
 export CLOUD_PROVIDER=local

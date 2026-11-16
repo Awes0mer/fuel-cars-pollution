@@ -458,6 +458,10 @@ def results_section(c):
                           lines, "change, % (100·ln)", c.source_line(["eia_mer_t1105", "eia_mer_t0901", "eia_mer_t0904", "fhwa_vm203", "ember_ev_monthly"]) +
                           " · Predictions: results/learning_results.json", y_zero=True, unit_note="percentage points of 100·ln change; holdout starts 2005",
                           shade=(2005, 2024, "holdout"), width=760, height=380))
+    if not hy:
+        out.append('<h3>HydraDB in this run</h3><p class="note">This result file comes from a memory-only run: no HydraDB metrics, '
+                   'and the parity part of the rule is not met.</p>')
+        return "".join(out)
     nc = hy["node_counts"]
     out.append('<h3>HydraDB in this run</h3>'
                '<div class="stats"><div class="stat"><b>%s</b><span>HTTP queries for the full walk-forward</span></div>'

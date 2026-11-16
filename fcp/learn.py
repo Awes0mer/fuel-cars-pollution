@@ -53,7 +53,8 @@ def link_state_id(link_id, year):
 
 
 def prediction_id(target, year):
-    return 2_000_000 + VAR_IDS[target] * 10_000 + year
+    # 3_000_000+ so prediction ids never meet link-history ids (2_010_000 .. 2_059_999)
+    return 3_000_000 + VAR_IDS[target] * 10_000 + year
 
 
 # --- data -----------------------------------------------------------------

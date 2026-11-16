@@ -98,3 +98,12 @@ def test_changes_skip_flagged_and_missing():
     assert set(ch["CO2"]) == {2001}
     assert abs(ch["CO2"][2001] - 100 * math.log(1.1)) < 1e-12
     assert abs(ch["EVShare"][2001] - 1.0) < 1e-12
+
+
+def test_node_id_ranges_are_disjoint():
+    years = range(1900, 2101)
+    states = {L.link_state_id(lid, y) for lid, _, _ in L.LINKS for y in years}
+    preds = {L.prediction_id(t, y) for t in L.TARGETS for y in years}
+    fixed = set(L.VAR_IDS.values()) | {lid for lid, _, _ in L.LINKS} | set(L.FIT_IDS.values())
+    assert not states & preds and not (states | preds) & fixed
+    assert len(states) == len(L.LINKS) * len(years) and len(preds) == len(L.TARGETS) * len(years)

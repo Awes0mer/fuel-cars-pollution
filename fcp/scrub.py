@@ -14,12 +14,41 @@ import hashlib
 import io
 import json
 import re
+import xml.etree.ElementTree as ET
 import zipfile
 
 from fcp.fetch import MANIFEST, ROOT
 
-AUTHOR_TAGS = re.compile(rb"(<(dc:creator|cp:lastModifiedBy)>)[^<]*(</\2>)")
 SCRUBBED_PART = "docProps/core.xml"
+# Author fields by namespace URI and local name, whatever prefix or attributes the file uses.
+AUTHOR_FIELDS = {
+    ("http://purl.org/dc/elements/1.1/", "creator"),
+    ("http://schemas.openxmlformats.org/package/2006/metadata/core-properties", "lastModifiedBy"),
+}
+
+
+def _author_elements(root):
+    for el in root.iter():
+        if el.tag.startswith("{"):
+            ns, local = el.tag[1:].split("}", 1)
+            if (ns, local) in AUTHOR_FIELDS:
+                yield el
+
+
+def author_values(core_xml):
+    """Non-empty author field values in a docProps/core.xml document."""
+    return [el.text.strip() for el in _author_elements(ET.fromstring(core_xml)) if el.text and el.text.strip()]
+
+
+def clear_authors(core_xml):
+    """Empty every author field; the rest of the XML text is left byte-for-byte as it was."""
+    out = core_xml
+    for value in set(author_values(core_xml)):
+        enc = value.encode("utf-8")
+        esc = enc.replace(b"&", b"&amp;").replace(b"<", b"&lt;").replace(b">", b"&gt;")
+        out = re.sub(rb"(>\s*)" + re.escape(esc) + rb"(\s*</)", rb"\1\2", out)
+    assert not author_values(out), "author field left after scrubbing"
+    return out
 
 
 def scrub_bytes(data):
@@ -32,7 +61,7 @@ def scrub_bytes(data):
             body = src.read(info.filename)
             crcs[info.filename] = info.CRC
             if info.filename == SCRUBBED_PART:
-                body = AUTHOR_TAGS.sub(rb"\1\3", body)
+                body = clear_authors(body)
             zi = zipfile.ZipInfo(info.filename, date_time=info.date_time)
             zi.compress_type = info.compress_type
             zi.external_attr = info.external_attr
@@ -44,7 +73,7 @@ def has_author_names(data):
     z = zipfile.ZipFile(io.BytesIO(data))
     if SCRUBBED_PART not in z.namelist():
         return False
-    return bool(re.search(rb"<(dc:creator|cp:lastModifiedBy)>[^<]+<", z.read(SCRUBBED_PART)))
+    return bool(author_values(z.read(SCRUBBED_PART)))
 
 
 def scrub_entry(entry):

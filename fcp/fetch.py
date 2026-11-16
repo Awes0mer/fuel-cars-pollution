@@ -64,19 +64,26 @@ def main():
     args = ap.parse_args()
     manifest = load_manifest()
     by = {e["id"]: e for e in manifest.get("files", [])}
+    failed = []
     for src in SOURCES:
         if args.only and src["id"] != args.only:
             continue
         try:
             entry = fetch_one(src)
+            from fcp.scrub import scrub_entry  # no personal names in stored files
+
+            scrub_entry(entry)
             by[src["id"]] = entry
             print("ok   %-22s %9d bytes  %s" % (src["id"], entry["bytes"], entry["sha256"][:12]))
-        except Exception as e:  # report and keep going; a failed file is simply absent
+        except Exception as e:  # report, keep going, and fail the run at the end
             print("FAIL %-22s %s" % (src["id"], e))
+            failed.append(src["id"])
     manifest["files"] = [by[s["id"]] for s in SOURCES if s["id"] in by]
     with open(MANIFEST, "w", encoding="utf-8", newline="\n") as f:
         json.dump(manifest, f, indent=1)
         f.write("\n")
+    if failed:
+        raise SystemExit("download failed for: %s (earlier files for these sources, if any, were kept)" % ", ".join(failed))
 
 
 if __name__ == "__main__":
