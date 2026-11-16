@@ -104,3 +104,25 @@ def test_pages_load_nothing_from_other_hosts():
                 assert not re.match(r"(https?:)?//", href.group(1)), (path, tag)
         assert not re.search(r"""url\(\s*["']?(https?:)?//""", text), path
         assert "@import" not in text, path
+
+
+def test_site_and_readme_build_from_memory_only_results(tmp_path, monkeypatch):
+    """A result file without a HydraDB run (python -m fcp.experiment --memory-only) must still render."""
+    with open(results_path(), encoding="utf-8") as f:
+        r = json.load(f)
+    r["hydradb"] = None
+    r["graph_predictions_from"] = "memory"
+    for p in r["rule"]:
+        if p["part"] == 1:
+            p.update(value=None, margin=None, **{"pass": False})
+    r["verdict"] = "FAIL"
+    fake = tmp_path / "learning_results.json"
+    fake.write_text(json.dumps(r), encoding="utf-8")
+    monkeypatch.setattr(site, "results_path", lambda: str(fake))
+    monkeypatch.setattr(readme, "results_path", lambda: str(fake))
+    monkeypatch.setattr(site, "SITE", str(tmp_path / "site"))
+    site.build()
+    html = (tmp_path / "site" / "index.html").read_text(encoding="utf-8")
+    assert "unavailable (no HydraDB run)" in html and "memory-only run" in html
+    text = readme.render()
+    assert "unavailable (no HydraDB run)" in text and "No HydraDB run in this result file" in text

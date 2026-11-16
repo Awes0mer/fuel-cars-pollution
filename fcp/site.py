@@ -337,6 +337,14 @@ def rerun_note(sc, r):
                 r["tuning"]["knn_k"], r["tuning"]["knn_window"] or "all", pct(sc["knn"]["holdout_mae"])))
 
 
+def rule_num(p, key):
+    """A rule value or margin as text; parity values are tiny, and absent without a HydraDB run."""
+    v = p[key]
+    if v is None:
+        return "unavailable (no HydraDB run)"
+    return ("%.3g" % v) if p["part"] == 1 else pct(v)
+
+
 def pct(v):
     return "%.2f" % v
 
@@ -402,8 +410,7 @@ def results_section(c):
     rule_rows = "".join(
         '<tr><td>%d. %s</td><td>%s</td><td>%s</td><td>%s</td><td class="%s">%s</td></tr>' % (
             p["part"], esc(p["name"]), esc(p["threshold"]),
-            ("%.3g" % p["value"]) if p["part"] == 1 else pct(p["value"]),
-            ("%.3g" % p["margin"]) if p["part"] == 1 else pct(p["margin"]),
+            rule_num(p, "value"), rule_num(p, "margin"),
             "pass" if p["pass"] else "fail", "PASS" if p["pass"] else "FAIL")
         for p in r["rule"])
     boot = r["bootstrap_95"]

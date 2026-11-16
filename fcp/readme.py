@@ -9,7 +9,7 @@ import os
 from fcp.fetch import MANIFEST, ROOT
 from fcp.learn import results_path
 from fcp.cite import citations, software_citation
-from fcp.site import note_2008
+from fcp.site import note_2008, rule_num
 from fcp.sources import NOT_COVERED, REJECTED, SOFTWARE, SOURCES
 from fcp.stats import CORR_OUT, SUMMARY_OUT
 
@@ -109,8 +109,7 @@ def render():
     a("| Rule part | Threshold | Value | Margin | Result |")
     a("|---|---|---:|---:|---|")
     for p in r["rule"]:
-        val = ("%.3g" % p["value"]) if p["part"] == 1 else f2(p["value"])
-        mar = ("%.3g" % p["margin"]) if p["part"] == 1 else f2(p["margin"])
+        val, mar = rule_num(p, "value"), rule_num(p, "margin")
         a("| %d. %s | %s | %s | %s | %s |" % (p["part"], p["name"], p["threshold"], val, mar, "PASS" if p["pass"] else "FAIL"))
     a("")
     sec = r["secondary_targets"]
