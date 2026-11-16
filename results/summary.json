@@ -1,0 +1,52 @@
+{
+ "holdout_n": 18,
+ "excluding_2020_2021": {
+  "n": 16,
+  "graph": 1.7005574000109764,
+  "no_change": 1.5294015805944507,
+  "knn": 1.6304898572523703,
+  "frozen_graph": 1.2305035215267652,
+  "direct_regression": 2.2816968772401767
+ },
+ "holdout_first_half_to_2014": {
+  "n": 8,
+  "graph": 2.163512494358697,
+  "no_change": 1.9337830183403717,
+  "knn": 2.0055591449125085,
+  "frozen_graph": 1.5855083316524337,
+  "direct_regression": 2.497450788229687
+ },
+ "holdout_second_half_from_2015": {
+  "n": 10,
+  "graph": 1.4490821943607368,
+  "no_change": 3.5674031762417053,
+  "knn": 3.6464463074075217,
+  "frozen_graph": 2.8477113403703354,
+  "direct_regression": 2.3528617473694764
+ },
+ "graph_wins_by_year": {
+  "no_change": 9,
+  "knn": 10,
+  "frozen_graph": 8,
+  "direct_regression": 11
+ },
+ "ev_link_weight_range_2012_on": {
+  "min": -4.921445582286545,
+  "max": 1.2117881330553302,
+  "ev_years_used": 13
+ },
+ "largest_graph_errors": [
+  {
+   "year": 2008,
+   "abs_error": 6.849731759830606
+  },
+  {
+   "year": 2021,
+   "abs_error": 3.456071906960986
+  },
+  {
+   "year": 2011,
+   "abs_error": 3.381762446619341
+  }
+ ]
+}

@@ -1,0 +1,36 @@
+{
+ "generated_utc": "2026-11-16T06:04:38+00:00",
+ "values_tested": 300,
+ "seed": 3,
+ "range": "uniform sign, magnitude 10^-8 to 10^7",
+ "write_path": "UNWIND $rows AS row MERGE (n {id: row.id}) SET n:RoundTrip, n.v0 = row.v0, ...",
+ "mismatches": 34,
+ "max_ulps": 1,
+ "examples": [
+  {
+   "sent": "2.4175101554258526e-08",
+   "returned": "2.417510155425853e-08",
+   "ulps": 1
+  },
+  {
+   "sent": "2.1944769895670374e-07",
+   "returned": "2.1944769895670377e-07",
+   "ulps": 1
+  },
+  {
+   "sent": "102965.89564154249",
+   "returned": "102965.89564154248",
+   "ulps": 1
+  },
+  {
+   "sent": "-5.433725459985746e-08",
+   "returned": "-5.4337254599857464e-08",
+   "ulps": 1
+  },
+  {
+   "sent": "1.4388348692347929e-09",
+   "returned": "1.4388348692347927e-09",
+   "ulps": 1
+  }
+ ]
+}
