@@ -179,8 +179,7 @@ def _mer_fixture(tmp_path, monkeypatch, release, t_table, t_index):
     from fcp import cite
 
     page = tmp_path / "index.html"
-    page.write_text('<span class="label">Release Date:</span> <span class="date">
- %s </span>' % release, encoding="utf-8")
+    page.write_text('<span class="label">Release Date:</span> <span class="date">\n %s </span>' % release, encoding="utf-8")
     monkeypatch.setattr(cite, "_raw", lambda sid, name: str(page))
     times = {"eia_mer_t0901": t_table, "eia_mer_index": t_index}
     monkeypatch.setattr(cite, "_retrieved", times.get)
