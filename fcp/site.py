@@ -17,6 +17,13 @@ from fcp.stats import CORR_OUT, SUMMARY_OUT
 
 SITE = os.path.join(ROOT, "site")
 ROUNDTRIP = os.path.join(ROOT, "results", "hydradb_float_roundtrip.json")
+SITE_URL = "https://fuel-cars-pollution.netlify.app"
+FAVICON = (
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#0b5cad"/>'
+    '<path d="M14 20h14M30 22l12 10M30 44l12-10M44 32h8" stroke="#fff" stroke-width="4" fill="none"/>'
+    '<circle cx="14" cy="20" r="6" fill="#fff"/><circle cx="14" cy="44" r="6" fill="#fff"/><circle cx="44" cy="32" r="7" fill="#f2b600"/>'
+    '<circle cx="54" cy="32" r="4" fill="#fff"/></svg>'
+)
 REPO_URL = "https://github.com/Awes0mer/fuel-cars-pollution"
 
 NAV = [
@@ -97,6 +104,9 @@ def page(fname, title, body, description):
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<title>%s</title><meta name="description" content="%s">'
+        '<link rel="icon" href="favicon.svg" type="image/svg+xml">'
+        '<meta property="og:type" content="website"><meta property="og:title" content="%s"><meta property="og:description" content="%s">'
+        '<meta property="og:image" content="%s/og.png"><meta property="og:url" content="%s/%s"><meta name="twitter:card" content="summary_large_image">'
         '<link rel="stylesheet" href="style.css"></head><body>'
         '<a href="#main" style="position:absolute;left:-999px" onfocus="this.style.left=\'8px\'">Skip to content</a>'
         '<header class="site"><div class="in"><a class="brand" href="index.html">Fuel, Cars &amp; Pollution</a><nav aria-label="Site">%s</nav></div></header>'
@@ -106,7 +116,7 @@ def page(fname, title, body, description):
         'This page is a static snapshot of the results. <a href="sources.html">Sources &amp; licences</a> · '
         '<a href="ai.html">AI disclosure</a> · <a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · '
         '<a href="%s">Code</a></div></footer></body></html>'
-    ) % (esc(title), esc(description), nav, body, REPO_URL)
+    ) % (esc(title), esc(description), esc(title), esc(description), SITE_URL, SITE_URL, fname, nav, body, REPO_URL)
 
 
 class Ctx:
@@ -414,6 +424,8 @@ def build():
             f.write(page(fname, title, body, desc))
     with open(os.path.join(SITE, "style.css"), "w", encoding="utf-8", newline="\n") as f:
         f.write(CSS.strip() + "\n")
+    with open(os.path.join(SITE, "favicon.svg"), "w", encoding="utf-8", newline="\n") as f:
+        f.write(FAVICON + "\n")
     print("site built:", ", ".join(sorted(pages)))
 
 

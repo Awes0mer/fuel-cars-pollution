@@ -33,6 +33,13 @@ def test_site_matches_results(tmp_path, monkeypatch):
             assert f.read() == fresh, "run: python -m fcp.site (%s)" % name
 
 
+def test_share_image_exists():
+    from PIL import Image
+
+    with Image.open(os.path.join(ROOT, "site", "og.png")) as im:
+        assert im.size == (1200, 630)
+
+
 def test_verdict_follows_rule():
     with open(results_path(), encoding="utf-8") as f:
         r = json.load(f)
