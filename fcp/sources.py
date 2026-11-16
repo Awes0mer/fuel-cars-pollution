@@ -70,7 +70,7 @@ SOURCES = [
         "region": "US",
         "licence": "U.S. government work (not subject to U.S. copyright, 17 U.S.C. 105)",
         "licence_url": "https://www.usa.gov/government-copyright",
-        "licence_evidence": "Data.gov lists FHWA's Highway Statistics datasets with licence https://www.usa.gov/government-works and access level public.",
+        "licence_evidence": "FHWA is a U.S. federal agency; U.S. government works are not subject to U.S. copyright (17 U.S.C. 105). Data.gov lists FHWA's related VM-1 dataset under https://www.usa.gov/government-works.",
     },
     {
         "id": "fhwa_vm1_2000_2024",
@@ -123,9 +123,9 @@ SOURCES = [
 REJECTED = [
     {
         "name": "IEA Global EV Outlook data (EV stock, world and US)",
-        "reason": "Licence could not be verified for the downloadable file. Our World in Data cites the 2026 report as CC BY 4.0, "
-        "but the IEA data-product page for the 2026 edition points to IEA terms for non-CC material, and iea.org refused "
-        "scripted requests (HTTP 403). Not used.",
+        "reason": "Licence could not be verified for the downloadable file. Our World in Data's metadata cites the 2026 report as CC BY 4.0, "
+        "while a web-search summary of IEA's 2026 data-product page reported IEA terms for non-CC material. iea.org refused "
+        "our requests (HTTP 403), so the page itself could not be read. Not used.",
     },
     {
         "name": "BTS National Transportation Statistics (vehicles in use, Table 1-11; EV sales, Table 1-19)",
@@ -141,13 +141,13 @@ REJECTED = [
     },
     {
         "name": "OICA world motor vehicle production",
-        "reason": "No open licence found on the publisher's site. Not used.",
+        "reason": "Its licence was not checked in this build and no openly licensed alternative was found. Not used.",
     },
 ]
 
 NOT_COVERED = [
     {"item": "Number of car companies over time", "why": "No citable, openly licensed time series was found."},
-    {"item": "Cars in use since the first car (pre-1957)", "why": "The only official long series found (FHWA MV-200, 1900-1995) is not machine-readable here; see licences page."},
+    {"item": "Cars in use before 2000, and anything since the first car", "why": "U.S. registered vehicles here start in 2000 (FHWA VM-1) and miles driven in 1957 (FHWA VM-203). The only official long series found (FHWA MV-200, 1900-1995) is not machine-readable here; see the sources page."},
     {"item": "World cars in use and world car production", "why": "No openly licensed source with a verifiable licence was found."},
     {"item": "World transport CO2", "why": "Not downloaded in this build; no sector-level open file was added."},
     {"item": "EV fleet (stock) size", "why": "The openly licensed EV file (Ember) gives new registrations, not the fleet in use."},

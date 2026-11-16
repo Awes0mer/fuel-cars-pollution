@@ -78,6 +78,11 @@ output{font-weight:700}
 footer{border-top:1px solid var(--line);margin-top:40px;background:var(--soft)}
 footer .in{padding-top:14px;padding-bottom:24px;font-size:.88rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
+.src{border:1px solid var(--line);border-radius:6px;padding:4px 14px 10px;margin:12px 0}
+.src h3{margin:.6rem 0 .3rem;font-size:1.02rem}
+.src dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:.92rem}
+.src dt{color:var(--muted)} .src dd{margin:0;min-width:0;overflow-wrap:anywhere}
+@media (max-width:520px){.src dl{grid-template-columns:1fr}.src dt{margin-top:6px}}
 """
 
 
@@ -185,9 +190,12 @@ def results_section(c):
                '<li>%s 95%% bootstrap interval of the MAE difference includes zero (table below). With n = %d, the ranking is not statistically settled.</li>'
                '<li>Year by year, the graph beats no change in %d of %d years and k-NN in %d of %d.</li>'
                '<li>Its largest misses: %s. 2008 is a recession it did not see coming from prices and miles alone.</li>'
+               '<li>On the design years 1982–2004, k-NN scored %s and the graph %s (lower is better).</li>'
+               '<li>Inputs are today&rsquo;s revised figures, not the first-release values available at the time; real-time accuracy is unmeasured.</li>'
                '<li>2009 and 2010 are not scored: FHWA marks 2009 vehicle-miles as unavailable, so both changes are missing.</li></ul></div>' % (
                    ex["n"], pct(ex["graph"]), lw(ex, "no_change"), pct(ex["no_change"]), lw(ex, "knn"), pct(ex["knn"]), lw(ex, "frozen_graph"), pct(ex["frozen_graph"]),
-                   "Every" if all(v["low"] <= 0 <= v["high"] for v in r["bootstrap_95"].values()) else "Not every", s["holdout_n"], wins["no_change"], s["holdout_n"], wins["knn"], s["holdout_n"], esc(worst)))
+                   "Every" if all(v["low"] <= 0 <= v["high"] for v in r["bootstrap_95"].values()) else "Not every", s["holdout_n"], wins["no_change"], s["holdout_n"], wins["knn"], s["holdout_n"], esc(worst),
+                   pct(sc["knn"]["design_mae"]), pct(sc["graph"]["design_mae"])))
     out.append('<h3>Scores</h3><div class="tablewrap"><table><caption>MAE of the predicted yearly change in U.S. transport CO2, percentage points of 100·ln change. '
                'Lower is better. Design years 1982–2004 were used to pick settings; holdout years were not.</caption>'
                '<thead><tr><th scope="col">Model</th><th scope="col">Holdout MAE</th><th scope="col">n</th><th scope="col">Holdout MAE without 2020–21 (n=%d)</th><th scope="col">Design MAE (n=%d)</th></tr></thead><tbody>%s</tbody></table></div>' % (
@@ -219,6 +227,14 @@ def results_section(c):
     return "".join(out)
 
 
+def weights_table(w):
+    rows = "".join('<tr><th scope="row">%s</th><td>%s</td><td>%.4f</td></tr>' % (esc(t), esc(k.replace("->", " → ")), v)
+                   for t in ("Gasoline", "FuelUse", "CO2") for k, v in w[t].items())
+    return ('<details><summary>Data table: learned link strengths after the last refit</summary><div class="tablewrap"><table>'
+            '<caption>Final weights and intercepts per target node</caption><thead><tr><th scope="col">Target</th><th scope="col">Term</th>'
+            '<th scope="col">Value</th></tr></thead><tbody>%s</tbody></table></div></details>' % rows)
+
+
 def diagram(w):
     fw = w
     def lbl(t, k):
@@ -239,8 +255,9 @@ def diagram(w):
         '<path d="M130,40H198"/><path d="M320,45L418,115"/><path d="M320,125H418"/><path d="M320,205L418,138"/><path d="M550,125H598"/></g>'
         '<g font-size="12" fill="#0b5cad" font-weight="700"><text x="164" y="34" text-anchor="middle">%s</text><text x="372" y="72">%s</text>'
         '<text x="369" y="119" text-anchor="middle">%s</text><text x="372" y="188">%s</text><text x="574" y="119" text-anchor="middle">%s</text></g></svg>'
-        '<p class="note">Weights are per percentage point of change (EV share: per point of share). Intercepts: gasoline %s, fuel use %s, CO2 %s. '
-        'Read from <code>results/learning_results.json</code> → <code>final_weights</code>.</p></figure>'
+        '<p class="note">Weights are per percentage point of change (EV share: per point of share). Intercepts: gasoline %s, fuel use %s, CO2 %s.</p>'
+        '<p class="source">Source: <code>results/learning_results.json</code> → <code>final_weights</code> (learned from the files on the sources page).</p>'
+        + weights_table(fw) + '</figure>'
     ) % (lbl("Gasoline", "Crude->Gasoline"), lbl("FuelUse", "Gasoline->FuelUse"), lbl("FuelUse", "VMT->FuelUse"), lbl("FuelUse", "EVShare->FuelUse"), lbl("CO2", "FuelUse->CO2"),
          lbl("Gasoline", "Crude->Gasoline"), lbl("FuelUse", "Gasoline->FuelUse"), lbl("FuelUse", "VMT->FuelUse"), lbl("FuelUse", "EVShare->FuelUse"), lbl("CO2", "FuelUse->CO2"),
          lbl("Gasoline", "bias"), lbl("FuelUse", "bias"), lbl("CO2", "bias"))
@@ -344,14 +361,16 @@ def sources_page(c):
     rows = []
     for s in SOURCES:
         m = c.manifest[s["id"]]
-        rows.append('<tr><td><b>%s</b><br>%s<br><a href="%s">%s</a></td><td>%s<br><a href="%s">licence page</a><br><i>"%s"</i></td><td>%s UTC<br>%s bytes<br><code>%s</code></td></tr>' % (
+        rows.append('<section class="src"><h3>%s</h3><dl><dt>Publisher</dt><dd>%s</dd><dt>File URL</dt><dd><a href="%s">%s</a></dd>'
+                    '<dt>Licence</dt><dd>%s (<a href="%s">licence page</a>): <i>"%s"</i></dd><dt>Retrieved</dt><dd>%s UTC, %s bytes</dd>'
+                    '<dt>SHA-256</dt><dd><code>%s</code></dd></dl></section>' % (
             esc(s["title"]), esc(s["publisher"]), esc(s["url"]), esc(s["url"]), esc(s["licence"]), esc(s["licence_url"]), esc(s["licence_evidence"]),
             esc(m["retrieved_at_utc"]), "{:,}".format(m["bytes"]), esc(m["sha256"])))
     rej = "".join("<li><b>%s</b>: %s</li>" % (esc(x["name"]), esc(x["reason"])) for x in REJECTED)
     body = ('<h1>Sources &amp; licences</h1><p>Every number on this site is read from one of these files. Each was downloaded by <code>fcp/fetch.py</code>; '
             'the URL, retrieval time and SHA-256 are in <code>data/manifest.json</code>, and <code>tests/test_data.py</code> re-reads the raw files and checks both. '
             'Licences were checked on the pages linked below on the retrieval date.</p>'
-            '<div class="tablewrap"><table class="text"><thead><tr><th scope="col">File</th><th scope="col">Licence and evidence</th><th scope="col">Retrieved, size, SHA-256</th></tr></thead><tbody>%s</tbody></table></div>'
+            '%s'
             '<h2>Considered and not used</h2><ul class="plain">%s</ul>'
             '<h2>Credits and attribution</h2><ul class="plain">'
             '<li>Electric car registrations: Ember, Monthly EV Sales Data, CC BY 4.0. Values aggregated to calendar years and shares here.</li>'

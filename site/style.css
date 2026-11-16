@@ -46,3 +46,8 @@ output{font-weight:700}
 footer{border-top:1px solid var(--line);margin-top:40px;background:var(--soft)}
 footer .in{padding-top:14px;padding-bottom:24px;font-size:.88rem;color:var(--muted)}
 ul.plain{padding-left:1.2rem}
+.src{border:1px solid var(--line);border-radius:6px;padding:4px 14px 10px;margin:12px 0}
+.src h3{margin:.6rem 0 .3rem;font-size:1.02rem}
+.src dl{margin:0;display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:.92rem}
+.src dt{color:var(--muted)} .src dd{margin:0;min-width:0;overflow-wrap:anywhere}
+@media (max-width:520px){.src dl{grid-template-columns:1fr}.src dt{margin-top:6px}}

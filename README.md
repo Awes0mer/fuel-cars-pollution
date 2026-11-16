@@ -21,6 +21,8 @@ Before reading that as a win:
 - Largest misses: 2008 (6.85 pp), 2021 (3.46 pp), 2011 (3.38 pp). The 2008 recession was not visible in prices and miles driven.
 - The EV share → fuel use link is not identified: learned from 13 years, its weight swung between -4.92 and 1.21 after 2012.
 - Parity between HydraDB and the in-memory store passed the 1e-9 limit but is **not bit-identical**: max difference 1.25e-10 pp over 138 predictions (HydraDB returned 34 of 300 test floats one ULP off; see below).
+- On the design years (1982–2004) k-NN was better than the graph: MAE 1.03 vs 1.39 (n=23).
+- Inputs are today's revised figures, not the first-release values that existed at the time. A true real-time nowcast would see noisier inputs; this test does not measure that.
 - 2009 and 2010 are not scored: FHWA marks 2009 vehicle-miles as unavailable.
 
 | Model | Holdout MAE (pp) | n | Without 2020–21 (n=16) | Design MAE (n=23) |
@@ -113,20 +115,20 @@ Every number comes from a downloaded file; URL, retrieval time and SHA-256 are i
 | [Ember Monthly EV Sales Data (new car registrations by drivetrain)](https://files.ember-energy.org/public-downloads/transport/outputs/monthly_ev_sales.csv) | CC BY 4.0 | 2026-11-16T05:54:52+00:00 | `76e241d07d208647…` |
 | [EPA Air Pollutant Emissions Trends Data, national Tier 1 criteria air pollutants (updated 2026-09-04)](https://www.epa.gov/system/files/other-files/2026-09/national_tier1_caps_04sep2026.xlsx) | U.S. government work; EPA web policy allows free distribution and use for non-commercial, scientific and educational purposes | 2026-11-16T05:54:53+00:00 | `c8087d3462594164…` |
 
-Flags: the latest year of each EIA Monthly Energy Review table is marked provisional; EPA highway-vehicle values for 2024–2025 are marked carried forward (EPA's workbook notes say those years repeat the 2023 inventory for non-power-plant sources; a test checks they equal 2023); calendar years with fewer than 12 months of Ember data are marked partial. Flagged values are shown but left out of correlations and scoring.
+Flags: the latest year of each EIA Monthly Energy Review table is marked provisional; EPA highway-vehicle values for 2024–2025 are marked carried forward (EPA's workbook notes say those years repeat the 2023 inventory except power-plant NOx/SO2 and fires; a test checks the highway values equal 2023); calendar years with fewer than 12 months of Ember data are marked partial. Flagged values are shown but left out of correlations and scoring.
 
 Considered and not used:
 
-- **IEA Global EV Outlook data (EV stock, world and US)**: Licence could not be verified for the downloadable file. Our World in Data cites the 2026 report as CC BY 4.0, but the IEA data-product page for the 2026 edition points to IEA terms for non-CC material, and iea.org refused scripted requests (HTTP 403). Not used.
+- **IEA Global EV Outlook data (EV stock, world and US)**: Licence could not be verified for the downloadable file. Our World in Data's metadata cites the 2026 report as CC BY 4.0, while a web-search summary of IEA's 2026 data-product page reported IEA terms for non-CC material. iea.org refused our requests (HTTP 403), so the page itself could not be read. Not used.
 - **BTS National Transportation Statistics (vehicles in use, Table 1-11; EV sales, Table 1-19)**: bts.gov refused scripted requests (HTTP 403). The block was not circumvented. Not used.
 - **Argonne National Laboratory light-duty electric drive vehicle monthly sales**: anl.gov refused scripted requests (HTTP 403). Not used.
 - **FHWA Highway Statistics Summary to 1995, Table MV-200 (registrations 1900-1995)**: Published only as an Excel 4 workbook (.xlw, BIFF4W) and a PDF; no parser in this project reads either reliably. Not used.
-- **OICA world motor vehicle production**: No open licence found on the publisher's site. Not used.
+- **OICA world motor vehicle production**: Its licence was not checked in this build and no openly licensed alternative was found. Not used.
 
 Not covered:
 
 - **Number of car companies over time**: No citable, openly licensed time series was found.
-- **Cars in use since the first car (pre-1957)**: The only official long series found (FHWA MV-200, 1900-1995) is not machine-readable here; see licences page.
+- **Cars in use before 2000, and anything since the first car**: U.S. registered vehicles here start in 2000 (FHWA VM-1) and miles driven in 1957 (FHWA VM-203). The only official long series found (FHWA MV-200, 1900-1995) is not machine-readable here; see the sources page.
 - **World cars in use and world car production**: No openly licensed source with a verifiable licence was found.
 - **World transport CO2**: Not downloaded in this build; no sector-level open file was added.
 - **EV fleet (stock) size**: The openly licensed EV file (Ember) gives new registrations, not the fleet in use.
@@ -135,6 +137,7 @@ Not covered:
 
 - Small sample: 18 holdout years; the intervals above are wide.
 - The author knew the broad history of the holdout years (2008, 2020) even though settings were picked on 1982–2004 only.
+- Inputs are revised (final) values from today's files, not real-time vintages; real-time accuracy is unmeasured.
 - Nowcasting is narrow: EIA publishes the real CO2 figure within months. The value shown is the learning loop, not a forecast product.
 - U.S. only for the learning loop. World series are shown but not modelled.
 - The "what the links imply" calculator on the site is arithmetic on the final weights; it was not tested as a scenario model.

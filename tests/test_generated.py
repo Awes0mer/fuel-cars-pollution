@@ -18,6 +18,11 @@ def test_readme_matches_results():
         assert f.read() == readme.render(), "run: python -m fcp.readme"
 
 
+def test_launch_kit_matches_results():
+    with open(readme.LAUNCH, encoding="utf-8") as f:
+        assert f.read() == readme.render_launch(), "run: python -m fcp.readme"
+
+
 def test_site_matches_results(tmp_path, monkeypatch):
     monkeypatch.setattr(site, "SITE", str(tmp_path))
     site.build()
